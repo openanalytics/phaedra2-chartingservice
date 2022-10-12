@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>eu.openanalytics.phaedra</groupId>
+        <artifactId>phaedra2-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../phaedra2-parent</relativePath>
+    </parent>
+    <packaging>pom</packaging>
+
+    <artifactId>phaedra2-chartingservice</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>phaedra2-chartingservice</name>
+
+    <properties>
+        <java.version>16</java.version>
+    </properties>
+
+    <modules>
+        <module>dto/</module>
+        <module>client/</module>
+        <module>server/</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <header>LICENSE_HEADER</header>
+                    <aggregate>true</aggregate>
+                    <strictCheck>true</strictCheck>
+                    <excludes>
+                        <exclude>*.log</exclude>
+                        <exclude>mvnw.cmd</exclude>
+                        <exclude>mvnw</exclude>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/*.yml</exclude>
+                        <exclude>**/*.yaml</exclude>
+                        <exclude>**/*.config</exclude>
+                        <exclude>**/*.xml</exclude>
+                        <exclude>LICENSE</exclude>
+                        <exclude>LICENSE_HEADER</exclude>
+                        <exclude>Dockerfile</exclude>
+                        <exclude>README.md</exclude>
+                        <exclude>**/*.json</exclude>
+                        <exclude>.gitignore</exclude>
+                        <exclude>src/deb/**</exclude>
+                        <exclude>templates/**</exclude>
+                        <exclude>src/main/resources/static/handlebars/node_modules/**</exclude>
+                        <exclude>**/*.sql</exclude>
+                        <exclude>Dockerfile.app</exclude>
+                        <exclude>Dockerfile.db</exclude>
+                        <exclude>Jenkinsfile</exclude>
+                        <exclude>**/*.sh</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-copyright-headers</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                    <!--                    <execution>-->
+                    <!--                        <id>check-copyright-headers</id>-->
+                    <!--                        <phase>package</phase>-->
+                    <!--                        <goals>-->
+                    <!--                            <goal>check</goal>-->
+                    <!--                        </goals>-->
+                    <!--                    </execution>-->
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- We cannot specify this in the parent POM, as the repositories are needed to fetch the parent pom.    -->
+    <repositories>
+        <!-- Maven queries repositories in the order that they are defined here.
+         Usually, the Maven Central repository is the last one in this order, because it's defined in the super POM.
+         This means that for all dependencies which are downloaded from Maven Central, the custom repositories are
+         queried first, which slows down the build a lot.
+         Therefore we add central as the first repository in this list.
+         This reduces the time to download dependencies on a fresh machine from ~20-30min to 1min
+         See: https://maven.apache.org/ref/3.6.3/maven-model-builder/super-pom.html for the origin of this configuration
+         -->
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>oa-nexus-snapshots</id>
+            <url>https://nexus.openanalytics.eu/repository/snapshots/</url>
+        </repository>
+    </repositories>
+</project>
