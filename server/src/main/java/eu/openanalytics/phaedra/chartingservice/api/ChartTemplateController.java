@@ -38,31 +38,31 @@ public class ChartTemplateController {
     }
 
     //Post chart template
-    @PostMapping(value = "/chartTemplate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ChartTemplateDTO> createChartTemplate(ChartTemplateDTO chartTemplateDTO) {
+    @PostMapping(value = "/chart-template", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ChartTemplateDTO> createChartTemplate(@RequestBody ChartTemplateDTO chartTemplateDTO) {
         ChartTemplateDTO response = chartTemplateService.createChartTemplate(chartTemplateDTO);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     //Put chart template
-    @PutMapping(value = "/chartTemplate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updateChartTemplate(ChartTemplateDTO chartTemplateDTO) {
+    @PutMapping(value = "/chart-template", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> updateChartTemplate(@RequestBody ChartTemplateDTO chartTemplateDTO) {
         chartTemplateService.updateChartTemplate(chartTemplateDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     //Delete chart template
-    @DeleteMapping(value="/chartTemplate/{chartTemplateId}")
+    @DeleteMapping(value="/chart-template/{chartTemplateId}")
     public ResponseEntity<Void> deleteChartTemplate(@PathVariable long chartTemplateId) {
         chartTemplateService.deleteChartTemplate(chartTemplateId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     //Get all chart templates
-    @GetMapping(value = "/chartTemplate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/chart-template", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<ChartTemplateDTO>> getAllChartTemplates() {
         Iterable<ChartTemplateDTO> response = chartTemplateService.getAllChartTemplates();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     //Get chart template by id
-    @GetMapping(value="/chartTemplate/{chartTemplateId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/chart-template/{chartTemplateId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ChartTemplateDTO> getChartTemplate(@PathVariable Long chartTemplateId) {
         ChartTemplateDTO response = chartTemplateService.getChartTemplateById(chartTemplateId);
         if (response != null)
