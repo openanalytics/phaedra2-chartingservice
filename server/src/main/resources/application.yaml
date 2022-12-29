@@ -1,0 +1,30 @@
+server:
+  servlet:
+    context-path: /phaedra/charting-service
+  port: 3003
+
+spring:
+  application:
+    name: phaedra-charting-service
+  jackson:
+    serialization:
+      indent_output: true
+  cloud:
+    kubernetes:
+      enabled: false
+  liquibase:
+    enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost
+
+
+logging:
+  file:
+    name: /var/log/chartingservice.log
+
+eureka:
+  client:
+    enabled: true

@@ -1,4 +1,24 @@
-package eu.openanalytics.phaedra.chartservice;
+/**
+ * Phaedra II
+ *
+ * Copyright (C) 2016-2022 Open Analytics
+ *
+ * ===========================================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Apache License as published by
+ * The Apache Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Apache License for more details.
+ *
+ * You should have received a copy of the Apache License
+ * along with this program.  If not, see <http://www.apache.org/licenses/>
+ */
+package eu.openanalytics.phaedra.chartingservice;
 
 import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
@@ -26,17 +46,17 @@ import java.time.Clock;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableScheduling
-public class ChartServiceApplication {
+public class ChartingServiceApplication {
     private final Environment environment;
     private final ServletContext servletContext;
 
-    public ChartServiceApplication(Environment environment, ServletContext servletContext) {
+    public ChartingServiceApplication(Environment environment, ServletContext servletContext) {
         this.environment = environment;
         this.servletContext = servletContext;
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(ChartServiceApplication.class);
+        SpringApplication.run(eu.openanalytics.phaedra.chartingservice.ChartingServiceApplication.class);
     }
 
     @Bean

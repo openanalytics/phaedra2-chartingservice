@@ -1,0 +1,72 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: smarien
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: axis_x
+                  type: text
+                  constraints:
+                      nullable: false
+              - column:
+                  name: axis_y
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: group_by
+                  type: text
+              - column:
+                  name: filter
+                  type: text
+            tableName: hca_chart_template
+  - changeSet:
+      id: 2
+      author: smarien
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: chart_template_id
+                  type: int
+                  constraints:
+                      nullable: false
+                      foreignKeyName: fk_chart_template_id
+                      references: hca_chart_template(id)
+              - column:
+                  name: setting_type
+                  type: text
+                  constraints:
+                      nullable: false
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                      nullable: false
+              - column:
+                  name: value
+                  type: text
+                  constraints:
+                      nullable: false
+            tableName: hca_setting
