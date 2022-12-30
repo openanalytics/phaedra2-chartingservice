@@ -33,7 +33,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ChartDTO {
+public class ChartDataDTO {
     private Long wellId;
-    private List<ChartTupleDTO> settings;
+    private List<ChartTupleDTO> values;
 }
