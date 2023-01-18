@@ -39,8 +39,10 @@ import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChartDataService {
