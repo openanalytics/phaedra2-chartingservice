@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.chartingservice.service;
 
 import eu.openanalytics.phaedra.chartingservice.dto.ChartDataDTO;
+import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
 import eu.openanalytics.phaedra.chartingservice.dto.ChartTupleDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
@@ -57,7 +58,7 @@ public class ChartDataService {
         this.protocolServiceClient = protocolServiceClient;
     }
 
-    public List<ChartDataDTO> getChartDataByPlateIds(List<Long> plateIds, String type) {
+    public List<ChartDataDTO> getChartDataByPlateIds(List<Long> plateIds, String type) throws ChartDataException {
         List<ChartDataDTO> chartData = new ArrayList<>();
         for (Long plateId : plateIds) {
             chartData.addAll(getChartDataByPlateId(plateId, type));
@@ -65,7 +66,7 @@ public class ChartDataService {
         return chartData;
     }
 
-    public List<ChartDataDTO> getChartDataByPlateId(Long plateId, String type) {
+    public List<ChartDataDTO> getChartDataByPlateId(Long plateId, String type) throws ChartDataException {
         Long measurementId = getActiveMeasurementIdByPlateId(plateId);
         ResultSetDTO resultSetDTO = getLatestResultSet(plateId, measurementId);
 
@@ -75,13 +76,12 @@ public class ChartDataService {
         return chartTuplesFeatures;
     }
 
-    private Long getActiveMeasurementIdByPlateId(Long plateId) {
+    private Long getActiveMeasurementIdByPlateId(Long plateId) throws ChartDataException {
         List<PlateMeasurementDTO> measurementDTOs = new ArrayList<>();
         try {
             measurementDTOs = plateServiceClient.getPlateMeasurements(plateId);
         } catch (PlateUnresolvableException e) {
-            //TODO: handle exception
-            return null;
+            throw new ChartDataException("Measurements for plate with id " + plateId + " are not resolvable");
         }
         //Find the active measurement
         for (PlateMeasurementDTO measurementDTO : measurementDTOs) {
@@ -89,19 +89,18 @@ public class ChartDataService {
                 return measurementDTO.getId();
             }
         }
-        return null;
+        throw new ChartDataException("No active measurement found for plate with id " + plateId);
     }
 
-    private ResultSetDTO getLatestResultSet(Long plateId, Long measurementId) {
+    private ResultSetDTO getLatestResultSet(Long plateId, Long measurementId) throws ChartDataException {
         try {
             return resultDataServiceClient.getLatestResultSet(plateId, measurementId);
         } catch (ResultSetUnresolvableException e) {
-            //TODO: handle exception
-            return null;
+            throw new ChartDataException("Latest result set for plate with id " + plateId + " and measurement with id " + measurementId + " is not resolvable");
         }
     }
 
-    private List<ChartDataDTO> getChartDataByResultSet(ResultSetDTO resultSetDTO, String type, List<ChartDataDTO> chartTuplesWells) {
+    private List<ChartDataDTO> getChartDataByResultSet(ResultSetDTO resultSetDTO, String type, List<ChartDataDTO> chartTuplesWells) throws ChartDataException {
         List<ResultDataDTO> resultDataDTOS = getResultDataByResultSetId(resultSetDTO);
         List<FeatureDTO> featureDTOS = getFeaturesByProtocolId(resultSetDTO.getProtocolId());
         for (ResultDataDTO resultDataDTO : resultDataDTOS) {
@@ -109,28 +108,27 @@ public class ChartDataService {
             String featureName = getFeatureNameById(featureDTOS, resultDataDTO.getFeatureId());
             if (featureName != null) {
                 for (ChartDataDTO chartTupleWell : chartTuplesWells) {
-                    chartTupleWell.getValues().add(index, new ChartTupleDTO(featureName, Float.toString(resultDataDTO.getValues()[index])));
+                    chartTupleWell.getValues().add(new ChartTupleDTO(featureName, Float.toString(resultDataDTO.getValues()[index])));
+                    index++;
                 }
             }
         }
         return chartTuplesWells;
     }
 
-    private List<ResultDataDTO> getResultDataByResultSetId(ResultSetDTO resultSetDTO) {
+    private List<ResultDataDTO> getResultDataByResultSetId(ResultSetDTO resultSetDTO) throws ChartDataException {
         try {
             return resultDataServiceClient.getResultData(resultSetDTO.getId());
         } catch (ResultDataUnresolvableException e) {
-            //TODO: handle exception
-            return null;
+            throw new ChartDataException("Result data for result set with id " + resultSetDTO.getId() + " is not resolvable");
         }
     }
 
-    private List<FeatureDTO> getFeaturesByProtocolId(Long protocolId) {
+    private List<FeatureDTO> getFeaturesByProtocolId(Long protocolId) throws ChartDataException {
         try {
             return protocolServiceClient.getFeaturesOfProtocol(protocolId);
         } catch (ProtocolUnresolvableException e) {
-            //TODO: handle exception
-            return null;
+            throw new ChartDataException("Features for protocol with id " + protocolId + " are not resolvable");
         }
     }
 
@@ -143,13 +141,12 @@ public class ChartDataService {
         return null;
     }
 
-    private List<ChartDataDTO> getWellDataByPlateId(Long plateId, String type) {
+    private List<ChartDataDTO> getWellDataByPlateId(Long plateId, String type) throws ChartDataException {
         List<WellDTO> wells;
         try {
             wells = plateServiceClient.getWells(plateId);
         } catch (PlateUnresolvableException e) {
-            //TODO: handle exception
-            return null;
+            throw new ChartDataException("Wells for plate with id " + plateId + " could not be found");
         }
 
         List<ChartDataDTO> chartDataDTOS = wells.stream().map(well -> {

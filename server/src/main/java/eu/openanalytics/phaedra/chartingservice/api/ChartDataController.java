@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.chartingservice.api;
 
 import eu.openanalytics.phaedra.chartingservice.dto.ChartDataDTO;
+import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
 import eu.openanalytics.phaedra.chartingservice.service.ChartDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,7 +44,7 @@ public class ChartDataController {
 
     //Get chart data for given plate ids and type
     @GetMapping(value = "/chartdata/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ChartDataDTO>> getChartData(@PathVariable String type, @RequestParam List<Long> plateIds) {
+    public ResponseEntity<List<ChartDataDTO>> getChartData(@PathVariable String type, @RequestParam List<Long> plateIds) throws ChartDataException {
         List<ChartDataDTO> chartData = chartDataService.getChartDataByPlateIds(plateIds, type);
         if (chartData != null) {
             return new ResponseEntity<>(chartData, HttpStatus.OK);
