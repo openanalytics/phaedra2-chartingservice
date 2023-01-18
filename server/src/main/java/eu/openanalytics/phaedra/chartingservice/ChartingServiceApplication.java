@@ -23,6 +23,7 @@ package eu.openanalytics.phaedra.chartingservice;
 import eu.openanalytics.phaedra.plateservice.client.config.PlateServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.protocolservice.client.config.ProtocolServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.resultdataservice.client.config.ResultDataServiceClientAutoConfiguration;
+import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
 import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
@@ -33,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
@@ -86,6 +88,12 @@ public class ChartingServiceApplication {
         dataSource.setUsername(username);
         dataSource.setPassword(password);
         return dataSource;
+    }
+
+    @Bean
+    @LoadBalanced
+    public PhaedraRestTemplate restTemplate() {
+        return new PhaedraRestTemplate();
     }
 
     @Bean
