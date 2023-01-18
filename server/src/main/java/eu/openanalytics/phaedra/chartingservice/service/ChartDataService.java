@@ -142,31 +142,28 @@ public class ChartDataService {
     }
 
     private List<ChartDataDTO> getWellDataByPlateId(Long plateId, String type) {
-        List<WellDTO> wells = new ArrayList<>();
+        List<WellDTO> wells;
         try {
             wells = plateServiceClient.getWells(plateId);
         } catch (PlateUnresolvableException e) {
             //TODO: handle exception
             return null;
         }
-        List<ChartDataDTO> chartDataDTOS = new ArrayList<>();
-        for (WellDTO well : wells) {
-            ChartDataDTO chartDataDTO = new ChartDataDTO();
-            chartDataDTO.setWellId(well.getId());
-            //For every field in well, create a ChartTupleDTO with the field name and value
-            Field[] fields = well.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                ChartTupleDTO chartTupleDTO = new ChartTupleDTO();
-                chartTupleDTO.setName(field.getName());
-                try {
-                    chartTupleDTO.setValue(field.get(well).toString());
-                } catch (IllegalAccessException e) {
-                    //TODO: handle exception
-                }
-                chartDataDTO.getValues().add(chartTupleDTO);
-            }
-            chartDataDTOS.add(chartDataDTO);
-        }
+
+        List<ChartDataDTO> chartDataDTOS = wells.stream().map(well -> {
+            List<ChartTupleDTO> chartTupleDTOs = new ArrayList<>();
+            chartTupleDTOs.add(new ChartTupleDTO("WellId", String.valueOf(well.getId())));
+            chartTupleDTOs.add(new ChartTupleDTO("PlateId", String.valueOf(well.getPlateId())));
+            chartTupleDTOs.add(new ChartTupleDTO("Row", String.valueOf(well.getRow())));
+            chartTupleDTOs.add(new ChartTupleDTO("Column", String.valueOf(well.getColumn())));
+            chartTupleDTOs.add(new ChartTupleDTO("WellType", well.getWellType()));
+            chartTupleDTOs.add(new ChartTupleDTO("WellStatus", well.getStatus().name()));
+            chartTupleDTOs.add(new ChartTupleDTO("CompoundId", String.valueOf(well.getCompoundId())));
+            chartTupleDTOs.add(new ChartTupleDTO("WellSubstance", well.getWellSubstance().getName()));
+            ChartDataDTO chartDataDTO = new ChartDataDTO(well.getId(), chartTupleDTOs);
+            return chartDataDTO;
+        }).collect(Collectors.toList());
+
         //Sort the list by wellId
         return sortByWellId(chartDataDTOS);
     }

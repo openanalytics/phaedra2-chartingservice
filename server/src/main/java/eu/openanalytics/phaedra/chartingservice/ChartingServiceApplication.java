@@ -20,6 +20,9 @@
  */
 package eu.openanalytics.phaedra.chartingservice;
 
+import eu.openanalytics.phaedra.plateservice.client.config.PlateServiceClientAutoConfiguration;
+import eu.openanalytics.phaedra.protocolservice.client.config.ProtocolServiceClientAutoConfiguration;
+import eu.openanalytics.phaedra.resultdataservice.client.config.ResultDataServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
@@ -31,6 +34,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -46,6 +50,9 @@ import java.time.Clock;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableScheduling
+@Import({ProtocolServiceClientAutoConfiguration.class,
+        ResultDataServiceClientAutoConfiguration.class,
+        PlateServiceClientAutoConfiguration.class,})
 public class ChartingServiceApplication {
     private final Environment environment;
     private final ServletContext servletContext;
