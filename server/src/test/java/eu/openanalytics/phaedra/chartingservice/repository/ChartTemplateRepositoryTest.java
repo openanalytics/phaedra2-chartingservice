@@ -48,7 +48,7 @@ public class ChartTemplateRepositoryTest {
     @Test
     public void getAllChartTemplates() {
         List<ChartTemplate> allChartTemplates = (List<ChartTemplate>) chartTemplateRepository.findAll();
-        assertThat(allChartTemplates).isEmpty();
+        assertThat(allChartTemplates).isNotEmpty();
     }
 
     @Test
