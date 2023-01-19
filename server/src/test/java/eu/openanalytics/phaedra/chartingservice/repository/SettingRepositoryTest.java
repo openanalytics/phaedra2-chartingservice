@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -49,7 +49,7 @@ public class SettingRepositoryTest {
     private SettingRepository settingRepository;
 
     @Container
-    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer(DockerImageName.parse("public.ecr.aws/docker/library/postgres:13-alpine").asCompatibleSubstituteFor(PostgreSQLContainer.IMAGE))
+    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer(DockerImageName.parse("public.ecr.aws/docker/library/postgres:13-alpine").asCompatibleSubstituteFor("postgres:13-alpine"))
             .withDatabaseName("phaedra2")
             .withUrlParam("currentSchema","plates")
             .withPassword("inmemory")
