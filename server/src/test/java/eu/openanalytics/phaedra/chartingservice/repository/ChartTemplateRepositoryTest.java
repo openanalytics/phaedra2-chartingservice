@@ -11,6 +11,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 import support.Containers;
 
 import static org.assertj.core.api.Assertions.*;
@@ -25,9 +26,8 @@ public class ChartTemplateRepositoryTest {
 
     @Autowired
     private ChartTemplateRepository chartTemplateRepository;
-
     @Container
-    private static JdbcDatabaseContainer postgresSQLContaioner = new PostgreSQLContainer("postgres:13-alpine")
+    private static JdbcDatabaseContainer postgresSQLContaioner = new PostgreSQLContainer(DockerImageName.parse("public.ecr.aws/docker/library/postgres:13-alpine").asCompatibleSubstituteFor(PostgreSQLContainer.IMAGE))
             .withDatabaseName("phaedra2")
             .withUrlParam("currentSchema", "charting")
             .withPassword("phaedra2")
@@ -47,6 +47,12 @@ public class ChartTemplateRepositoryTest {
 
     @Test
     public void getAllChartTemplates() {
+        ChartTemplate chartTemplate = new ChartTemplate();
+        chartTemplate.setType("scatter");
+        chartTemplate.setAxisY("Feature value");
+        chartTemplate.setAxisX("Volume (mL)");
+        chartTemplateRepository.save(chartTemplate);
+
         List<ChartTemplate> allChartTemplates = (List<ChartTemplate>) chartTemplateRepository.findAll();
         assertThat(allChartTemplates).isNotEmpty();
     }
