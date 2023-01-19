@@ -34,6 +34,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 import support.Containers;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class SettingServiceTest {
     private SettingService settingService;
 
     @Container
-    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
+    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer(DockerImageName.parse("public.ecr.aws/docker/library/postgres:13-alpine").asCompatibleSubstituteFor(PostgreSQLContainer.IMAGE))
             .withDatabaseName("phaedra2")
             .withUrlParam("currentSchema","plates")
             .withPassword("inmemory")
