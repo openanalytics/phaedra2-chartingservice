@@ -86,7 +86,7 @@ public class ChartDataService {
         //Find the active measurement
         for (PlateMeasurementDTO measurementDTO : measurementDTOs) {
             if (measurementDTO.getActive()==true) {
-                return measurementDTO.getId();
+                return measurementDTO.getMeasurementId();
             }
         }
         throw new ChartDataException("No active measurement found for plate with id " + plateId);
