@@ -70,6 +70,9 @@ public class ChartDataService {
         Long measurementId = getActiveMeasurementIdByPlateId(plateId);
         ResultSetDTO resultSetDTO = getLatestResultSet(plateId, measurementId);
 
+        if (resultSetDTO == null)
+            throw new ChartDataException("No result set found for plate " + plateId + " and measurement " + measurementId);
+
         List<ChartDataDTO> chartTuplesWells = getWellDataByPlateId(plateId, type);
         //Add values from features to chartData
         List<ChartDataDTO> chartTuplesFeatures = getChartDataByResultSet(resultSetDTO, type, chartTuplesWells);
@@ -85,7 +88,7 @@ public class ChartDataService {
         }
         //Find the active measurement
         for (PlateMeasurementDTO measurementDTO : measurementDTOs) {
-            if (measurementDTO.getActive()==true) {
+            if (measurementDTO.getActive() == true) {
                 return measurementDTO.getMeasurementId();
             }
         }
