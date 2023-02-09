@@ -47,8 +47,8 @@ public class ChartTemplateRepositoryTest {
     @Autowired
     private ChartTemplateRepository chartTemplateRepository;
     @Container
-    private static JdbcDatabaseContainer postgresSQLContaioner = new PostgreSQLContainer(DockerImageName.parse("public.ecr.aws/docker/library/postgres:13-alpine")
-            .asCompatibleSubstituteFor("postgres:13-alpine"))
+    private static JdbcDatabaseContainer postgresSQLContaioner = new PostgreSQLContainer(DockerImageName.parse("registry.openanalytics.eu/library/postgres:13-alpine")
+            .asCompatibleSubstituteFor(PostgreSQLContainer.IMAGE))
             .withDatabaseName("phaedra2")
             .withUrlParam("currentSchema", "charting")
             .withPassword("phaedra2")

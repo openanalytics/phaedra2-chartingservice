@@ -53,8 +53,8 @@ public class SettingServiceTest {
     private SettingService settingService;
 
     @Container
-    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer(DockerImageName.parse("public.ecr.aws/docker/library/postgres:13-alpine")
-            .asCompatibleSubstituteFor("postgres:13-alpine"))
+    private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer(DockerImageName.parse("registry.openanalytics.eu/library/postgres:13-alpine")
+            .asCompatibleSubstituteFor(PostgreSQLContainer.IMAGE))
             .withDatabaseName("phaedra2")
             .withUrlParam("currentSchema","plates")
             .withPassword("inmemory")
