@@ -3,3 +3,12 @@
 /server/phaedra2-chartingservice-server.iml
 /dto/phaedra2-chartingservice-dto.iml
 /client/phaedra2-chartingservice-client.iml
+
+# Eclipse IDE files
+/target/
+.settings/
+.project
+.classpath
+/client/target/
+/server/target/
+/dto/target/
