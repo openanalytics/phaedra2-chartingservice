@@ -20,6 +20,11 @@
  */
 package support;
 
+import java.sql.SQLException;
+
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -28,10 +33,6 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-
-import java.sql.SQLException;
 
 public class Containers {
 
@@ -40,13 +41,13 @@ public class Containers {
 
     static {
         postgreSQLContainer = new PostgreSQLContainer<>("postgres:13-alpine")
-                .withUrlParam("currentSchema","charts");
+                .withUrlParam("currentSchema","charting");
 
         postgreSQLContainer.start();
         try {
             var connection = postgreSQLContainer.createConnection("");
-            connection.createStatement().executeUpdate("create schema charts");
-            connection.setSchema("charts");
+            connection.createStatement().executeUpdate("create schema charting");
+            connection.setSchema("charting");
 
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
             Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.yaml", new ClassLoaderResourceAccessor(), database);
@@ -56,4 +57,3 @@ public class Containers {
         }
     }
 }
-
