@@ -8,6 +8,10 @@ databaseChangeLog:
   - changeSet:
       id: 1
       author: smarien
+      preConditions:
+        not:
+          tableExists:
+            tableName: hca_chart_template
       changes:
         - createTable:
             columns:
@@ -43,6 +47,10 @@ databaseChangeLog:
   - changeSet:
       id: 2
       author: smarien
+      preConditions:
+        not:
+          tableExists:
+            tableName: hca_setting
       changes:
         - sql:
             sql: set schema 'charting';
@@ -81,6 +89,10 @@ databaseChangeLog:
   - changeSet:
       id: 3
       author: sberberovic
+      preConditions:
+        not:
+          tableExists:
+            tableName: curve
       changes:
         - createTable:
             tableName: curve
@@ -131,6 +143,11 @@ databaseChangeLog:
   - changeSet:
       id: 4
       author: sberberovic
+      preConditions:
+        not:
+          columnExists:
+            tableName: curve
+            columnName: plate_id
       changes:
         - addColumn:
             tableName: curve
@@ -143,6 +160,11 @@ databaseChangeLog:
   - changeSet:
       id: 5
       author: sberberovic
+      preConditions:
+        not:
+          columnExists:
+            tableName: curve
+            columnName: result_set_id
       changes:
         - addColumn:
             tableName: curve
