@@ -18,12 +18,7 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package support;
-
-import java.sql.SQLException;
-
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
+package eu.openanalytics.phaedra.chartingservice.support;
 
 import liquibase.Contexts;
 import liquibase.LabelExpression;
@@ -33,6 +28,10 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+
+import java.sql.SQLException;
 
 public class Containers {
 

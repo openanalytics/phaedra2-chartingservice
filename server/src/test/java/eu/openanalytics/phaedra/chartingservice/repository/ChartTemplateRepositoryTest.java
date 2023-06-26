@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.chartingservice.repository;
 
 import eu.openanalytics.phaedra.chartingservice.model.ChartTemplate;
+import eu.openanalytics.phaedra.chartingservice.support.Containers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,11 +33,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import support.Containers;
-
-import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest

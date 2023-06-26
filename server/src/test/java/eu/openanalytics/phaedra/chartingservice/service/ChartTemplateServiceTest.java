@@ -23,6 +23,7 @@ package eu.openanalytics.phaedra.chartingservice.service;
 import eu.openanalytics.phaedra.chartingservice.dto.ChartTemplateDTO;
 import eu.openanalytics.phaedra.chartingservice.dto.SettingDTO;
 import eu.openanalytics.phaedra.chartingservice.enumeration.SettingType;
+import eu.openanalytics.phaedra.chartingservice.support.Containers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +36,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import support.Containers;
 
 import java.util.ArrayList;
 import java.util.List;
