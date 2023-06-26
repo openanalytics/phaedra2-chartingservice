@@ -44,6 +44,8 @@ databaseChangeLog:
       id: 2
       author: smarien
       changes:
+        - sql:
+            sql: set schema 'charting';
         - createTable:
             columns:
               - column:
@@ -76,10 +78,6 @@ databaseChangeLog:
                   constraints:
                       nullable: false
             tableName: hca_setting
-      author: sberberovic
-      changes:
-        - sql:
-            sql: set schema 'charting';
   - changeSet:
       id: 3
       author: sberberovic
