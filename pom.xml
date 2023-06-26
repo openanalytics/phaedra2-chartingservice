@@ -8,10 +8,10 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../phaedra2-parent</relativePath>
     </parent>
+
     <packaging>pom</packaging>
 
     <artifactId>phaedra2-chartingservice</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>phaedra2-chartingservice</name>
 
     <properties>
