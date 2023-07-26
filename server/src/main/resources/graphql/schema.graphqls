@@ -19,5 +19,5 @@ type ChartLayout {
 }
 
 type Query {
-    scatterPlot(plateId: ID, xFeatureId: ID, yFeatureID: ID, groupBy: String): Chart
+    scatterPlot(plateId: ID, xFeatureId: ID, yFeatureId: ID, groupBy: String): Chart
 }
