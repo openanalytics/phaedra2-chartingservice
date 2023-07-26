@@ -1,0 +1,23 @@
+type Chart {
+    data: [ChartData]
+    layout: ChartLayout
+}
+
+type ChartData {
+    x: [Float]
+    y: [Float]
+    type: String
+    name: String
+    mode: String
+
+}
+
+type ChartLayout {
+    chartTitle: String
+    xAxisLabel: String
+    yAxisLabel: String
+}
+
+type Query {
+    scatterPlot(plateId: ID, xFeatureId: ID, yFeatureID: ID, groupBy: String): Chart
+}

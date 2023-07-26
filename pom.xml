@@ -2,20 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>eu.openanalytics.phaedra</groupId>
         <artifactId>phaedra2-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../phaedra2-parent</relativePath>
     </parent>
-
     <packaging>pom</packaging>
 
     <artifactId>phaedra2-chartingservice</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <name>phaedra2-chartingservice</name>
 
     <properties>
         <java.version>16</java.version>
+        <spring-cloud.version>2021.0.3</spring-cloud.version>
     </properties>
 
     <modules>
@@ -60,24 +62,25 @@
                     </excludes>
                 </configuration>
                 <executions>
+<!--                    <execution>-->
+<!--                        <id>generate-copyright-headers</id>-->
+<!--                        <phase>process-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>format</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
                     <execution>
-                        <id>generate-copyright-headers</id>
-                        <phase>process-sources</phase>
+                        <id>check-copyright-headers</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>format</goal>
+                            <goal>check</goal>
                         </goals>
                     </execution>
-                    <!--                    <execution>-->
-                    <!--                        <id>check-copyright-headers</id>-->
-                    <!--                        <phase>package</phase>-->
-                    <!--                        <goals>-->
-                    <!--                            <goal>check</goal>-->
-                    <!--                        </goals>-->
-                    <!--                    </execution>-->
                 </executions>
             </plugin>
         </plugins>
     </build>
+
 
     <!-- We cannot specify this in the parent POM, as the repositories are needed to fetch the parent pom.    -->
     <repositories>

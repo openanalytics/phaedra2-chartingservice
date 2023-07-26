@@ -7,7 +7,7 @@ spring:
   cloud:
     kubernetes:
       enabled: true
+  graphql:
+    graphiql:
+      enabled: true
 
-eureka:
-  client:
-    enabled: false

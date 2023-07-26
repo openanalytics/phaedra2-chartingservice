@@ -1,4 +1,0 @@
-DB_URL: jdbc:postgresql://localhost:5432/phaedra2?currentSchema=charts
-DB_USER: phaedra2
-DB_PASSWORD: phaedra2
-SERVICE_REGISTRY: http://localhost:8761/eureka

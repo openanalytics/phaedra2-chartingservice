@@ -19,12 +19,12 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://localhost
+  graphql:
+    graphiql:
+      enabled: true
 
 
 logging:
   file:
     name: /var/log/chartingservice.log
 
-eureka:
-  client:
-    enabled: true
