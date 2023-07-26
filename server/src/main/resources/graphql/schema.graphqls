@@ -4,8 +4,8 @@ type Chart {
 }
 
 type ChartData {
-    x: [Float]
-    y: [Float]
+    xValue: [Float]
+    yValue: [Float]
     type: String
     name: String
     mode: String
