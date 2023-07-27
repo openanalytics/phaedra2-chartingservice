@@ -34,14 +34,12 @@ import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultDataUnr
 import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultSetUnresolvableException;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultDataDTO;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @Controller
@@ -95,6 +93,10 @@ public class ChartGraphQLController {
                 }
                 groupByMap.get(substanceName).getXValue().add(xResultData.getValues()[i]);
                 groupByMap.get(substanceName).getYValue().add(yResultData.getValues()[i]);
+            } else if (groupBy.equalsIgnoreCase("row")) {
+                //TODO
+            } else if (groupBy.equalsIgnoreCase("column")) {
+                //TODO
             } else {
                 if (!groupByMap.containsKey(groupBy)) {
                     groupByMap.put(groupBy, ChartData.builder()
@@ -187,6 +189,30 @@ public class ChartGraphQLController {
                 .xAxisLabel(xFeature.getName())
                 .yAxisLabel(yFeature.getName())
                 .build());
+
+        return chart;
+    }
+
+    @QueryMapping
+    public Chart boxPlot(@Argument long plateId, @Argument long featureId) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
+        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
+        ResultDataDTO resultData = resultDataServiceClient.getResultData(latestResultSet.getId(), featureId);
+
+        List<Float> yValues = new ArrayList<>();
+        IntStream.range(0, resultData.getValues().length).forEach(i -> {
+            yValues.add(Float.valueOf(resultData.getValues()[i]));
+        });
+        ChartData chartData = ChartData.builder().type("box").yValue(yValues).build();
+
+        FeatureDTO feature = protocolServiceClient.getFeature(featureId);
+        ChartLayout chartLayout = ChartLayout.builder()
+                .chartTitle(String.format("Box plot"))
+                .yAxisLabel(feature.getName())
+                .build();
+
+        Chart chart = new Chart();
+        chart.setData(ArrayUtils.toArray(chartData));
+        chart.setLayout(chartLayout);
 
         return chart;
     }
