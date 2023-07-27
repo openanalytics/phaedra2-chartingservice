@@ -94,9 +94,44 @@ public class ChartGraphQLController {
                 groupByMap.get(substanceName).getXValue().add(xResultData.getValues()[i]);
                 groupByMap.get(substanceName).getYValue().add(yResultData.getValues()[i]);
             } else if (groupBy.equalsIgnoreCase("row")) {
-                //TODO
+                String row = wells.get(i).getRow().toString();
+                if (!groupByMap.containsKey(row)) {
+                    groupByMap.put(row, ChartData.builder()
+                            .mode("markers")
+                            .type("scatter")
+                            .name(row)
+                            .xValue(new ArrayList<>())
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(row).getXValue().add(xResultData.getValues()[i]);
+                groupByMap.get(row).getYValue().add(yResultData.getValues()[i]);
             } else if (groupBy.equalsIgnoreCase("column")) {
-                //TODO
+                String column = wells.get(i).getColumn().toString();
+                if (!groupByMap.containsKey(column)) {
+                    groupByMap.put(column, ChartData.builder()
+                            .mode("markers")
+                            .type("scatter")
+                            .name(column)
+                            .xValue(new ArrayList<>())
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(column).getXValue().add(xResultData.getValues()[i]);
+                groupByMap.get(column).getYValue().add(yResultData.getValues()[i]);
+            } else if (groupBy.equalsIgnoreCase("status")) {
+                String wellStatus = wells.get(i).getStatus().name();
+                if (!groupByMap.containsKey(wellStatus)) {
+                    groupByMap.put(wellStatus, ChartData.builder()
+                            .mode("markers")
+                            .type("scatter")
+                            .name(wellStatus)
+                            .xValue(new ArrayList<>())
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(wellStatus).getXValue().add(xResultData.getValues()[i]);
+                groupByMap.get(wellStatus).getYValue().add(yResultData.getValues()[i]);
             } else {
                 if (!groupByMap.containsKey(groupBy)) {
                     groupByMap.put(groupBy, ChartData.builder()
