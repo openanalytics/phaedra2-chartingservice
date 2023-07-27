@@ -123,4 +123,71 @@ public class ChartGraphQLController {
 
         return chart;
     }
+
+    @QueryMapping
+    public Chart barPlot(@Argument long plateId, @Argument long xFeatureId, @Argument long yFeatureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
+        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
+
+        ResultDataDTO xResultData = resultDataServiceClient.getResultData(latestResultSet.getId(), xFeatureId);
+        ResultDataDTO yResultData = resultDataServiceClient.getResultData(latestResultSet.getId(), yFeatureId);
+
+        List<WellDTO> wells = plateServiceClient.getWells(plateId);
+
+        Map<String, ChartData> groupByMap = new HashMap<>();
+
+        IntStream.range(0, wells.size()).forEach(i -> {
+            if (groupBy.equalsIgnoreCase("welltype")) {
+                String wellType = wells.get(i).getWellType();
+                if (!groupByMap.containsKey(wellType)) {
+                    groupByMap.put(wellType, ChartData.builder()
+                            .mode("markers")
+                            .type("bar")
+                            .name(wellType)
+                            .xValue(new ArrayList<>())
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(wellType).getXValue().add(xResultData.getValues()[i]);
+                groupByMap.get(wellType).getYValue().add(yResultData.getValues()[i]);
+            } else if (groupBy.equalsIgnoreCase("substance")) {
+                String substanceName = wells.get(i).getWellSubstance().getName();
+                if (!groupByMap.containsKey(substanceName)) {
+                    groupByMap.put(substanceName, ChartData.builder()
+                            .mode("markers")
+                            .type("bar")
+                            .name(substanceName)
+                            .xValue(new ArrayList<>())
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(substanceName).getXValue().add(xResultData.getValues()[i]);
+                groupByMap.get(substanceName).getYValue().add(yResultData.getValues()[i]);
+            } else {
+                if (!groupByMap.containsKey(groupBy)) {
+                    groupByMap.put(groupBy, ChartData.builder()
+                            .mode("markers")
+                            .type("bar")
+                            .name(groupBy)
+                            .xValue(new ArrayList<>())
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(groupBy).getXValue().add(xResultData.getValues()[i]);
+                groupByMap.get(groupBy).getYValue().add(yResultData.getValues()[i]);
+            }
+        });
+
+        FeatureDTO xFeature = protocolServiceClient.getFeature(xFeatureId);
+        FeatureDTO yFeature = protocolServiceClient.getFeature(yFeatureId);
+
+        Chart chart = new Chart();
+        chart.setData(groupByMap.values().toArray(ChartData[]::new));
+        chart.setLayout(ChartLayout.builder()
+                .chartTitle(String.format("Plate Bar Plot"))
+                .xAxisLabel(xFeature.getName())
+                .yAxisLabel(yFeature.getName())
+                .build());
+
+        return chart;
+    }
 }

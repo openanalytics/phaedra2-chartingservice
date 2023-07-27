@@ -9,7 +9,6 @@ type ChartData {
     type: String
     name: String
     mode: String
-
 }
 
 type ChartLayout {
@@ -20,4 +19,5 @@ type ChartLayout {
 
 type Query {
     scatterPlot(plateId: ID, xFeatureId: ID, yFeatureId: ID, groupBy: String): Chart
+    barPlot(plateId: ID, xFeatureId: ID, yFeatureId: ID, groupBy: String): Chart
 }
