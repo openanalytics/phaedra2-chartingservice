@@ -21,5 +21,5 @@ type Query {
     scatterPlot(plateId: ID, xFeatureId: ID, yFeatureId: ID, groupBy: String): Chart
     barPlot(plateId: ID, xFeatureId: ID, yFeatureId: ID, groupBy: String): Chart
     boxPlot(plateId: ID, featureId: ID): Chart
-    boxPlot(plateId: ID, featureId: ID, groupBy: String): Chart
+    boxPlotWithGrouping(plateId: ID, featureId: ID, groupBy: String): Chart
 }

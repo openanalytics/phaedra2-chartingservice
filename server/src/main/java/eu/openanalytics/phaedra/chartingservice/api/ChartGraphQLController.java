@@ -67,7 +67,7 @@ public class ChartGraphQLController {
         Map<String, ChartData> groupByMap = new HashMap<>();
 
         IntStream.range(0, wells.size()).forEach(i -> {
-            if (groupBy.equalsIgnoreCase("welltype")) {
+            if ("welltype".equalsIgnoreCase(groupBy)) {
                 String wellType = wells.get(i).getWellType();
                 if (!groupByMap.containsKey(wellType)) {
                     groupByMap.put(wellType, ChartData.builder()
@@ -93,7 +93,7 @@ public class ChartGraphQLController {
                 }
                 groupByMap.get(substanceName).getXValue().add(xResultData.getValues()[i]);
                 groupByMap.get(substanceName).getYValue().add(yResultData.getValues()[i]);
-            } else if (groupBy.equalsIgnoreCase("row")) {
+            } else if ("row".equalsIgnoreCase(groupBy)) {
                 String row = wells.get(i).getRow().toString();
                 if (!groupByMap.containsKey(row)) {
                     groupByMap.put(row, ChartData.builder()
@@ -106,7 +106,7 @@ public class ChartGraphQLController {
                 }
                 groupByMap.get(row).getXValue().add(xResultData.getValues()[i]);
                 groupByMap.get(row).getYValue().add(yResultData.getValues()[i]);
-            } else if (groupBy.equalsIgnoreCase("column")) {
+            } else if ("column".equalsIgnoreCase(groupBy)) {
                 String column = wells.get(i).getColumn().toString();
                 if (!groupByMap.containsKey(column)) {
                     groupByMap.put(column, ChartData.builder()
@@ -119,7 +119,7 @@ public class ChartGraphQLController {
                 }
                 groupByMap.get(column).getXValue().add(xResultData.getValues()[i]);
                 groupByMap.get(column).getYValue().add(yResultData.getValues()[i]);
-            } else if (groupBy.equalsIgnoreCase("status")) {
+            } else if ("status".equalsIgnoreCase(groupBy)) {
                 String wellStatus = wells.get(i).getStatus().name();
                 if (!groupByMap.containsKey(wellStatus)) {
                     groupByMap.put(wellStatus, ChartData.builder()
@@ -173,7 +173,7 @@ public class ChartGraphQLController {
         Map<String, ChartData> groupByMap = new HashMap<>();
 
         IntStream.range(0, wells.size()).forEach(i -> {
-            if (groupBy.equalsIgnoreCase("welltype")) {
+            if ("welltype".equalsIgnoreCase(groupBy)) {
                 String wellType = wells.get(i).getWellType();
                 if (!groupByMap.containsKey(wellType)) {
                     groupByMap.put(wellType, ChartData.builder()
@@ -186,7 +186,7 @@ public class ChartGraphQLController {
                 }
                 groupByMap.get(wellType).getXValue().add(xResultData.getValues()[i]);
                 groupByMap.get(wellType).getYValue().add(yResultData.getValues()[i]);
-            } else if (groupBy.equalsIgnoreCase("substance")) {
+            } else if ("substance".equalsIgnoreCase(groupBy)) {
                 String substanceName = wells.get(i).getWellSubstance().getName();
                 if (!groupByMap.containsKey(substanceName)) {
                     groupByMap.put(substanceName, ChartData.builder()
@@ -253,7 +253,7 @@ public class ChartGraphQLController {
     }
 
     @QueryMapping
-    public Chart boxPlot(@Argument long plateId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
+    public Chart boxPlotWithGrouping(@Argument long plateId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
         ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
         ResultDataDTO resultData = resultDataServiceClient.getResultData(latestResultSet.getId(), featureId);
         var wells = plateServiceClient.getWells(plateId);
@@ -261,7 +261,7 @@ public class ChartGraphQLController {
 
         Map<String, ChartData> groupByMap = new HashMap<>();
         IntStream.range(0, wells.size()).forEach(i -> {
-            if (groupBy.equalsIgnoreCase("welltype")) {
+            if ("welltype".equalsIgnoreCase(groupBy)) {
                 String wellType = wells.get(i).getWellType();
                 if (!groupByMap.containsKey(wellType)) {
                     groupByMap.put(wellType, ChartData.builder()
@@ -271,7 +271,7 @@ public class ChartGraphQLController {
                             .build());
                 }
                 groupByMap.get(wellType).getYValue().add(resultData.getValues()[i]);
-            } else if (groupBy.equalsIgnoreCase("substance")) {
+            } else if ("substance".equalsIgnoreCase(groupBy)) {
                 String substanceName = wells.get(i).getWellSubstance().getName();
                 if (!groupByMap.containsKey(substanceName)) {
                     groupByMap.put(substanceName, ChartData.builder()
@@ -281,7 +281,7 @@ public class ChartGraphQLController {
                             .build());
                 }
                 groupByMap.get(substanceName).getYValue().add(resultData.getValues()[i]);
-            } else if (groupBy.equalsIgnoreCase("row")) {
+            } else if ("row".equalsIgnoreCase(groupBy)) {
                 String row = wells.get(i).getRow().toString();
                 if (!groupByMap.containsKey(row)) {
                     groupByMap.put(row, ChartData.builder()
@@ -291,7 +291,7 @@ public class ChartGraphQLController {
                             .build());
                 }
                 groupByMap.get(row).getYValue().add(resultData.getValues()[i]);
-            } else if (groupBy.equalsIgnoreCase("column")) {
+            } else if ("column".equalsIgnoreCase(groupBy)) {
                 String column = wells.get(i).getColumn().toString();
                 if (!groupByMap.containsKey(column)) {
                     groupByMap.put(column, ChartData.builder()
@@ -301,7 +301,7 @@ public class ChartGraphQLController {
                             .build());
                 }
                 groupByMap.get(column).getYValue().add(resultData.getValues()[i]);
-            } else if (groupBy.equalsIgnoreCase("status")) {
+            } else if ("status".equalsIgnoreCase(groupBy)) {
                 String wellStatus = wells.get(i).getStatus().name();
                 if (!groupByMap.containsKey(wellStatus)) {
                     groupByMap.put(wellStatus, ChartData.builder()
