@@ -251,4 +251,85 @@ public class ChartGraphQLController {
 
         return chart;
     }
+
+    @QueryMapping
+    public Chart boxPlot(@Argument long plateId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
+        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
+        ResultDataDTO resultData = resultDataServiceClient.getResultData(latestResultSet.getId(), featureId);
+        var wells = plateServiceClient.getWells(plateId);
+        FeatureDTO feature = protocolServiceClient.getFeature(featureId);
+
+        Map<String, ChartData> groupByMap = new HashMap<>();
+        IntStream.range(0, wells.size()).forEach(i -> {
+            if (groupBy.equalsIgnoreCase("welltype")) {
+                String wellType = wells.get(i).getWellType();
+                if (!groupByMap.containsKey(wellType)) {
+                    groupByMap.put(wellType, ChartData.builder()
+                            .type("box")
+                            .name(wellType)
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(wellType).getYValue().add(resultData.getValues()[i]);
+            } else if (groupBy.equalsIgnoreCase("substance")) {
+                String substanceName = wells.get(i).getWellSubstance().getName();
+                if (!groupByMap.containsKey(substanceName)) {
+                    groupByMap.put(substanceName, ChartData.builder()
+                            .type("box")
+                            .name(substanceName)
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(substanceName).getYValue().add(resultData.getValues()[i]);
+            } else if (groupBy.equalsIgnoreCase("row")) {
+                String row = wells.get(i).getRow().toString();
+                if (!groupByMap.containsKey(row)) {
+                    groupByMap.put(row, ChartData.builder()
+                            .type("box")
+                            .name(row)
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(row).getYValue().add(resultData.getValues()[i]);
+            } else if (groupBy.equalsIgnoreCase("column")) {
+                String column = wells.get(i).getColumn().toString();
+                if (!groupByMap.containsKey(column)) {
+                    groupByMap.put(column, ChartData.builder()
+                            .type("box")
+                            .name(column)
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(column).getYValue().add(resultData.getValues()[i]);
+            } else if (groupBy.equalsIgnoreCase("status")) {
+                String wellStatus = wells.get(i).getStatus().name();
+                if (!groupByMap.containsKey(wellStatus)) {
+                    groupByMap.put(wellStatus, ChartData.builder()
+                            .type("box")
+                            .name(wellStatus)
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(wellStatus).getYValue().add(resultData.getValues()[i]);
+            } else {
+                if (!groupByMap.containsKey(groupBy)) {
+                    groupByMap.put(groupBy, ChartData.builder()
+                            .type("box")
+                            .name(groupBy)
+                            .yValue(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(groupBy).getYValue().add(resultData.getValues()[i]);
+            }
+        });
+
+        Chart chart = new Chart();
+        chart.setData(groupByMap.values().toArray(ChartData[]::new));
+        chart.setLayout(ChartLayout.builder()
+                .chartTitle(String.format("Box Plot"))
+                .yAxisLabel(feature.getName())
+                .build());
+
+        return chart;
+    }
 }
