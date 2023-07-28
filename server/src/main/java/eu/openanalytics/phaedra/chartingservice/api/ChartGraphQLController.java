@@ -42,6 +42,8 @@ import org.springframework.stereotype.Controller;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import static java.lang.Float.*;
+
 @Controller
 public class ChartGraphQLController {
 
@@ -78,8 +80,8 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(wellType).getXValue().add(xResultData.getValues()[i]);
-                groupByMap.get(wellType).getYValue().add(yResultData.getValues()[i]);
+                groupByMap.get(wellType).getXValue().add(valueOf(xResultData.getValues()[i]));
+                groupByMap.get(wellType).getYValue().add(valueOf(yResultData.getValues()[i]));
             } else if (groupBy.equalsIgnoreCase("substance")) {
                 String substanceName = wells.get(i).getWellSubstance().getName();
                 if (!groupByMap.containsKey(substanceName)) {
@@ -91,8 +93,8 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(substanceName).getXValue().add(xResultData.getValues()[i]);
-                groupByMap.get(substanceName).getYValue().add(yResultData.getValues()[i]);
+                groupByMap.get(substanceName).getXValue().add(valueOf(xResultData.getValues()[i]));
+                groupByMap.get(substanceName).getYValue().add(valueOf(yResultData.getValues()[i]));
             } else if ("row".equalsIgnoreCase(groupBy)) {
                 String row = wells.get(i).getRow().toString();
                 if (!groupByMap.containsKey(row)) {
@@ -104,8 +106,8 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(row).getXValue().add(xResultData.getValues()[i]);
-                groupByMap.get(row).getYValue().add(yResultData.getValues()[i]);
+                groupByMap.get(row).getXValue().add(valueOf(xResultData.getValues()[i]));
+                groupByMap.get(row).getYValue().add(valueOf(yResultData.getValues()[i]));
             } else if ("column".equalsIgnoreCase(groupBy)) {
                 String column = wells.get(i).getColumn().toString();
                 if (!groupByMap.containsKey(column)) {
@@ -117,8 +119,8 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(column).getXValue().add(xResultData.getValues()[i]);
-                groupByMap.get(column).getYValue().add(yResultData.getValues()[i]);
+                groupByMap.get(column).getXValue().add(valueOf(xResultData.getValues()[i]));
+                groupByMap.get(column).getYValue().add(valueOf(yResultData.getValues()[i]));
             } else if ("status".equalsIgnoreCase(groupBy)) {
                 String wellStatus = wells.get(i).getStatus().name();
                 if (!groupByMap.containsKey(wellStatus)) {
@@ -130,8 +132,8 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(wellStatus).getXValue().add(xResultData.getValues()[i]);
-                groupByMap.get(wellStatus).getYValue().add(yResultData.getValues()[i]);
+                groupByMap.get(wellStatus).getXValue().add(valueOf(xResultData.getValues()[i]));
+                groupByMap.get(wellStatus).getYValue().add(valueOf(yResultData.getValues()[i]));
             } else {
                 if (!groupByMap.containsKey(groupBy)) {
                     groupByMap.put(groupBy, ChartData.builder()
@@ -142,8 +144,8 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(groupBy).getXValue().add(xResultData.getValues()[i]);
-                groupByMap.get(groupBy).getYValue().add(yResultData.getValues()[i]);
+                groupByMap.get(groupBy).getXValue().add(valueOf(xResultData.getValues()[i]));
+                groupByMap.get(groupBy).getYValue().add(valueOf(yResultData.getValues()[i]));
             }
         });
 
@@ -177,7 +179,7 @@ public class ChartGraphQLController {
                         .xValue(new ArrayList<>())
                         .build());
             }
-            groupByMap.get(feature.getName()).getXValue().add(resultData.getValues()[i]);
+            groupByMap.get(feature.getName()).getXValue().add(valueOf(resultData.getValues()[i]));
         });
 
         Chart chart = new Chart();
@@ -210,7 +212,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(wellType).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(wellType).getYValue().add(valueOf(resultData.getValues()[i]));
             } else if ("substance".equalsIgnoreCase(groupBy)) {
                 String substanceName = wells.get(i).getWellSubstance().getName();
                 if (!groupByMap.containsKey(substanceName)) {
@@ -221,7 +223,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(substanceName).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(substanceName).getYValue().add(valueOf(resultData.getValues()[i]));
             } else {
                 if (!groupByMap.containsKey(groupBy)) {
                     groupByMap.put(groupBy, ChartData.builder()
@@ -231,7 +233,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(groupBy).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(groupBy).getYValue().add(valueOf(resultData.getValues()[i]));
             }
         });
 
@@ -252,7 +254,7 @@ public class ChartGraphQLController {
 
         List<Float> yValues = new ArrayList<>();
         IntStream.range(0, resultData.getValues().length).forEach(i -> {
-            yValues.add(Float.valueOf(resultData.getValues()[i]));
+            yValues.add(valueOf(resultData.getValues()[i]));
         });
         ChartData chartData = ChartData.builder().type("box").yValue(yValues).build();
 
@@ -287,7 +289,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(wellType).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(wellType).getYValue().add(valueOf(resultData.getValues()[i]));
             } else if ("substance".equalsIgnoreCase(groupBy)) {
                 String substanceName = wells.get(i).getWellSubstance().getName();
                 if (!groupByMap.containsKey(substanceName)) {
@@ -297,7 +299,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(substanceName).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(substanceName).getYValue().add(valueOf(resultData.getValues()[i]));
             } else if ("row".equalsIgnoreCase(groupBy)) {
                 String row = wells.get(i).getRow().toString();
                 if (!groupByMap.containsKey(row)) {
@@ -307,7 +309,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(row).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(row).getYValue().add(valueOf(resultData.getValues()[i]));
             } else if ("column".equalsIgnoreCase(groupBy)) {
                 String column = wells.get(i).getColumn().toString();
                 if (!groupByMap.containsKey(column)) {
@@ -317,7 +319,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(column).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(column).getYValue().add(valueOf(resultData.getValues()[i]));
             } else if ("status".equalsIgnoreCase(groupBy)) {
                 String wellStatus = wells.get(i).getStatus().name();
                 if (!groupByMap.containsKey(wellStatus)) {
@@ -327,7 +329,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(wellStatus).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(wellStatus).getYValue().add(valueOf(resultData.getValues()[i]));
             } else {
                 if (!groupByMap.containsKey(groupBy)) {
                     groupByMap.put(groupBy, ChartData.builder()
@@ -336,7 +338,7 @@ public class ChartGraphQLController {
                             .yValue(new ArrayList<>())
                             .build());
                 }
-                groupByMap.get(groupBy).getYValue().add(resultData.getValues()[i]);
+                groupByMap.get(groupBy).getYValue().add(valueOf(resultData.getValues()[i]));
             }
         });
 
