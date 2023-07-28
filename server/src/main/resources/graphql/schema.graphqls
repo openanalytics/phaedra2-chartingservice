@@ -22,4 +22,5 @@ type Query {
     barPlot(plateId: ID, xFeatureId: ID, yFeatureId: ID, groupBy: String): Chart
     boxPlot(plateId: ID, featureId: ID): Chart
     boxPlotWithGrouping(plateId: ID, featureId: ID, groupBy: String): Chart
+    histogramPlot(plateId: ID, featureId: ID, groupBy: String): Chart
 }
