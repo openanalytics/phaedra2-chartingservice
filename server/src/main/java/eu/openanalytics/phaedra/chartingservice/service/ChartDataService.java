@@ -38,9 +38,7 @@ import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,7 +95,7 @@ public class ChartDataService {
 
     private ResultSetDTO getLatestResultSet(Long plateId, Long measurementId) throws ChartDataException {
         try {
-            return resultDataServiceClient.getLatestResultSet(plateId, measurementId);
+            return resultDataServiceClient.getLatestResultSetByPlateIdAndMeasId(plateId, measurementId);
         } catch (ResultSetUnresolvableException e) {
             throw new ChartDataException("Latest result set for plate with id " + plateId + " and measurement with id " + measurementId + " is not resolvable");
         }

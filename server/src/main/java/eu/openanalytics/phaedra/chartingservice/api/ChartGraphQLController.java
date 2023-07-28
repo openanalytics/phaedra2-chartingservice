@@ -58,8 +58,8 @@ public class ChartGraphQLController {
     }
 
     @QueryMapping
-    public Chart scatterPlot(@Argument long plateId, @Argument long xFeatureId, @Argument long yFeatureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
-        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
+    public Chart scatterPlot(@Argument long plateId, @Argument long protocolId, @Argument long xFeatureId, @Argument long yFeatureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
+        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSetByPlateIdAndProtocolId(plateId, protocolId);
 
         ResultDataDTO xResultData = resultDataServiceClient.getResultData(latestResultSet.getId(), xFeatureId);
         ResultDataDTO yResultData = resultDataServiceClient.getResultData(latestResultSet.getId(), yFeatureId);
@@ -164,8 +164,8 @@ public class ChartGraphQLController {
     }
 
     @QueryMapping
-    public Chart histogramPlot(@Argument long plateId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException{
-        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
+    public Chart histogramPlot(@Argument long plateId, @Argument long protocolId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException{
+        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSetByPlateIdAndProtocolId(plateId, protocolId);
         ResultDataDTO resultData = resultDataServiceClient.getResultData(latestResultSet.getId(), featureId);
         var wells = plateServiceClient.getWells(plateId);
         FeatureDTO feature = protocolServiceClient.getFeature(featureId);
@@ -194,8 +194,8 @@ public class ChartGraphQLController {
     }
 
     @QueryMapping
-    public Chart barPlot(@Argument long plateId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
-        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
+    public Chart barPlot(@Argument long plateId, @Argument long protocolId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
+        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSetByPlateIdAndProtocolId(plateId, protocolId);
         ResultDataDTO resultData = resultDataServiceClient.getResultData(latestResultSet.getId(), featureId);
         List<WellDTO> wells = plateServiceClient.getWells(plateId);
         FeatureDTO feature = protocolServiceClient.getFeature(featureId);
@@ -248,8 +248,8 @@ public class ChartGraphQLController {
     }
 
     @QueryMapping
-    public Chart boxPlot(@Argument long plateId, @Argument long featureId) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
-        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
+    public Chart boxPlot(@Argument long plateId, @Argument long protocolId, @Argument long featureId) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
+        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSetByPlateIdAndProtocolId(plateId, protocolId);
         ResultDataDTO resultData = resultDataServiceClient.getResultData(latestResultSet.getId(), featureId);
 
         List<Float> yValues = new ArrayList<>();
@@ -272,8 +272,8 @@ public class ChartGraphQLController {
     }
 
     @QueryMapping
-    public Chart boxPlotWithGrouping(@Argument long plateId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
-        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSet(plateId);
+    public Chart boxPlotWithGrouping(@Argument long plateId, @Argument long protocolId, @Argument long featureId, @Argument String groupBy) throws ResultSetUnresolvableException, ResultDataUnresolvableException, PlateUnresolvableException, FeatureUnresolvableException {
+        ResultSetDTO latestResultSet = resultDataServiceClient.getLatestResultSetByPlateIdAndProtocolId(plateId, protocolId);
         ResultDataDTO resultData = resultDataServiceClient.getResultData(latestResultSet.getId(), featureId);
         var wells = plateServiceClient.getWells(plateId);
         FeatureDTO feature = protocolServiceClient.getFeature(featureId);

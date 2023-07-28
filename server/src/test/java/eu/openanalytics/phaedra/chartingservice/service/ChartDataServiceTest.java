@@ -97,7 +97,7 @@ public class ChartDataServiceTest {
         wellDTOS.add(WellDTO.builder().id(4L).plateId(1L).row(2).column(2).wellType("Sample").status(WellStatus.ACCEPTED).compoundId(4L).wellSubstance(fillerSubstanceDTO).build());
         doReturn(wellDTOS).when(plateServiceClient).getWells(1L);
 
-        doReturn(ResultSetDTO.builder().id(1L).plateId(1L).measId(1L).protocolId(1L).build()).when(resultDataServiceClient).getLatestResultSet(1L, 1L);
+        doReturn(ResultSetDTO.builder().id(1L).plateId(1L).measId(1L).protocolId(1L).build()).when(resultDataServiceClient).getLatestResultSetByPlateIdAndMeasId(1L, 1L);
         List<ResultDataDTO> resultDataDTOS = new ArrayList<>();
         resultDataDTOS.add(ResultDataDTO.builder().id(1L).featureId(1L).resultSetId(1L).values(new float[]{1.11f, 2.22f, 3.33f, 4.44f}).build());
         resultDataDTOS.add(ResultDataDTO.builder().id(2L).featureId(2L).resultSetId(1L).values(new float[]{5.55f, 6.66f, 7.77f, 8.88f}).build());

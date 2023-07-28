@@ -18,9 +18,9 @@ type ChartLayout {
 }
 
 type Query {
-    scatterPlot(plateId: ID, xFeatureId: ID, yFeatureId: ID, groupBy: String): Chart
-    barPlot(plateId: ID, featureId: ID, groupBy: String): Chart
-    boxPlot(plateId: ID, featureId: ID): Chart
-    boxPlotWithGrouping(plateId: ID, featureId: ID, groupBy: String): Chart
-    histogramPlot(plateId: ID, featureId: ID, groupBy: String): Chart
+    scatterPlot(plateId: ID, protocolId:ID, xFeatureId: ID, yFeatureId: ID, groupBy: String): Chart
+    barPlot(plateId: ID, protocolId:ID, featureId: ID, groupBy: String): Chart
+    boxPlot(plateId: ID, protocolId:ID, featureId: ID): Chart
+    boxPlotWithGrouping(plateId: ID, protocolId:ID, featureId: ID, groupBy: String): Chart
+    histogramPlot(plateId: ID, protocolId:ID, featureId: ID, groupBy: String): Chart
 }
