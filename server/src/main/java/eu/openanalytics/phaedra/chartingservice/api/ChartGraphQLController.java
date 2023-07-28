@@ -184,7 +184,7 @@ public class ChartGraphQLController {
         chart.setData(groupByMap.values().toArray(ChartData[]::new));
         chart.setLayout(ChartLayout.builder()
                 .chartTitle(String.format("1D Histogram"))
-                .yAxisLabel(feature.getName())
+                .xAxisLabel(feature.getName())
                 .build());
 
         return chart;
