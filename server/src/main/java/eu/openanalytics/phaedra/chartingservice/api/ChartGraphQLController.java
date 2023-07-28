@@ -172,7 +172,7 @@ public class ChartGraphQLController {
         IntStream.range(0, wells.size()).forEach(i -> {
             if (!groupByMap.containsKey(feature.getName())) {
                 groupByMap.put(feature.getName(), ChartData.builder()
-                        .type("box")
+                        .type("histogram")
                         .name(feature.getName())
                         .xValue(new ArrayList<>())
                         .build());
