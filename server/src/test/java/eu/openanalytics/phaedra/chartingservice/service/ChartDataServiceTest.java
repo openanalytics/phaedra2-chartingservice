@@ -28,7 +28,7 @@ import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableE
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.WellStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
 import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 import eu.openanalytics.phaedra.protocolservice.client.exception.ProtocolUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
@@ -91,10 +91,10 @@ public class ChartDataServiceTest {
         List<WellDTO> wellDTOS = new ArrayList<>();
         WellSubstanceDTO fillerSubstanceDTO = new WellSubstanceDTO();
         fillerSubstanceDTO.setName("Filler");
-        wellDTOS.add(WellDTO.builder().id(1L).plateId(1L).row(1).column(1).wellType("Sample").status(WellStatus.ACCEPTED).compoundId(1L).wellSubstance(fillerSubstanceDTO).build());
-        wellDTOS.add(WellDTO.builder().id(2L).plateId(1L).row(1).column(2).wellType("Sample").status(WellStatus.ACCEPTED).compoundId(2L).wellSubstance(fillerSubstanceDTO).build());
-        wellDTOS.add(WellDTO.builder().id(3L).plateId(1L).row(2).column(1).wellType("Sample").status(WellStatus.ACCEPTED).compoundId(3L).wellSubstance(fillerSubstanceDTO).build());
-        wellDTOS.add(WellDTO.builder().id(4L).plateId(1L).row(2).column(2).wellType("Sample").status(WellStatus.ACCEPTED).compoundId(4L).wellSubstance(fillerSubstanceDTO).build());
+        wellDTOS.add(WellDTO.builder().id(1L).plateId(1L).row(1).column(1).wellType("Sample").status(WellStatus.ACCEPTED).wellSubstance(fillerSubstanceDTO).build());
+        wellDTOS.add(WellDTO.builder().id(2L).plateId(1L).row(1).column(2).wellType("Sample").status(WellStatus.ACCEPTED).wellSubstance(fillerSubstanceDTO).build());
+        wellDTOS.add(WellDTO.builder().id(3L).plateId(1L).row(2).column(1).wellType("Sample").status(WellStatus.ACCEPTED).wellSubstance(fillerSubstanceDTO).build());
+        wellDTOS.add(WellDTO.builder().id(4L).plateId(1L).row(2).column(2).wellType("Sample").status(WellStatus.ACCEPTED).wellSubstance(fillerSubstanceDTO).build());
         doReturn(wellDTOS).when(plateServiceClient).getWells(1L);
 
         doReturn(ResultSetDTO.builder().id(1L).plateId(1L).measId(1L).protocolId(1L).build()).when(resultDataServiceClient).getLatestResultSetByPlateIdAndMeasId(1L, 1L);

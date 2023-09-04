@@ -158,7 +158,7 @@ public class ChartDataService {
             chartTupleDTOs.add(new ChartTupleDTO("Column", String.valueOf(well.getColumn())));
             chartTupleDTOs.add(new ChartTupleDTO("WellType", well.getWellType()));
             chartTupleDTOs.add(new ChartTupleDTO("WellStatus", well.getStatus().name()));
-            chartTupleDTOs.add(new ChartTupleDTO("CompoundId", String.valueOf(well.getCompoundId())));
+//            chartTupleDTOs.add(new ChartTupleDTO("CompoundId", String.valueOf(well.getCompoundId())));
             if (well.getWellSubstance() != null)
                 chartTupleDTOs.add(new ChartTupleDTO("WellSubstance", well.getWellSubstance().getName()));
             ChartDataDTO chartDataDTO = new ChartDataDTO(well.getId(), chartTupleDTOs);
