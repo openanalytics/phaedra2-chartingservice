@@ -20,6 +20,22 @@
  */
 package eu.openanalytics.phaedra.chartingservice;
 
+import java.time.Clock;
+
+import javax.sql.DataSource;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
 import eu.openanalytics.phaedra.plateservice.client.config.PlateServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.protocolservice.client.config.ProtocolServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.resultdataservice.client.config.ResultDataServiceClientAutoConfiguration;
@@ -30,23 +46,6 @@ import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-
-import javax.servlet.ServletContext;
-import javax.sql.DataSource;
-import java.time.Clock;
 
 @EnableWebSecurity
 @SpringBootApplication
@@ -56,12 +55,11 @@ import java.time.Clock;
         ResultDataServiceClientAutoConfiguration.class,
         PlateServiceClientAutoConfiguration.class,})
 public class ChartingServiceApplication {
+	
     private final Environment environment;
-    private final ServletContext servletContext;
 
-    public ChartingServiceApplication(Environment environment, ServletContext servletContext) {
+    public ChartingServiceApplication(Environment environment) {
         this.environment = environment;
-        this.servletContext = servletContext;
     }
 
     public static void main(String[] args) {
@@ -70,24 +68,7 @@ public class ChartingServiceApplication {
 
     @Bean
     public DataSource dataSource() {
-        String url = environment.getProperty("DB_URL");
-        String username = environment.getProperty("DB_USER");
-        String password = environment.getProperty("DB_PASSWORD");
-
-        if (StringUtils.isEmpty(url)) {
-            throw new RuntimeException("No database URL configured: " + url);
-        }
-        String driverClassName = JDBCUtils.getDriverClassName(url);
-        if (driverClassName == null) {
-            throw new RuntimeException("Unsupported database type: " + url);
-        }
-
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        return dataSource;
+    	return JDBCUtils.createDataSource(environment);
     }
 
     @Bean
