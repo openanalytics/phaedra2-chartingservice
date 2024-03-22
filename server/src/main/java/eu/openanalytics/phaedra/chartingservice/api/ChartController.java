@@ -25,7 +25,7 @@ public class ChartController {
                                     @RequestParam String yFieldName, @RequestParam AxisFieldType yFieldType) throws ChartDataException {
         ChartData result = new ChartData();
         result.setXValues(chartDataService.getChartData(plateId, protocolId, xFieldName, xFieldType));
-        result.setXValues(chartDataService.getChartData(plateId, protocolId, yFieldName, yFieldType));
+        result.setYValues(chartDataService.getChartData(plateId, protocolId, yFieldName, yFieldType));
         return result;
     }
 }

@@ -223,7 +223,7 @@ public class ChartDataService {
     );
 
     private List<String> convertWellDataToReadableFormat(List<WellDTO> wellData, String fieldName) throws ChartDataException {
-        Function<WellDTO, String> mapper = fieldMapper.get(fieldName.toLowerCase());
+        Function<WellDTO, String> mapper = fieldMapper.get(fieldName);
         if (mapper == null) {
             throw new ChartDataException(String.format("Unknown well property %s!", fieldName));
         }
