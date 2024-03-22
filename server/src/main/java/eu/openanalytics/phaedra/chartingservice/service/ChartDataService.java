@@ -21,27 +21,30 @@
 package eu.openanalytics.phaedra.chartingservice.service;
 
 import eu.openanalytics.phaedra.chartingservice.dto.ChartDataDTO;
-import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
 import eu.openanalytics.phaedra.chartingservice.dto.ChartTupleDTO;
+import eu.openanalytics.phaedra.chartingservice.enumeration.AxisFieldType;
+import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
+import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
+import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 import eu.openanalytics.phaedra.protocolservice.client.exception.ProtocolUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.resultdataservice.client.ResultDataServiceClient;
 import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultDataUnresolvableException;
 import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultSetUnresolvableException;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultDataDTO;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 import org.springframework.stereotype.Service;
 
-import eu.openanalytics.phaedra.resultdataservice.client.ResultDataServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
-import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ChartDataService {
@@ -175,4 +178,55 @@ public class ChartDataService {
         return chartDataDTOS;
     }
 
+    public List<String> getChartData(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType) throws ChartDataException {
+        if (AxisFieldType.FEATURE_ID.equals(fieldType)) {
+            ResultDataDTO resultData = retrieveResultData(plateId, protocolId, Long.parseLong(fieldName));
+            return convertValuesToReadableFormat(resultData.getValues());
+        } else if (AxisFieldType.WELL_PROPERTY.equals(fieldType)) {
+            List<WellDTO> wellData = retrieveWellData(plateId);
+            return convertWellDataToReadableFormat(wellData, fieldName);
+        } else {
+            throw new ChartDataException("Unknown axis field type!");
+        }
+    }
+
+    private ResultDataDTO retrieveResultData(Long plateId, Long protocolId, Long featureId) throws ChartDataException {
+        try {
+            ResultSetDTO resultSet = resultDataServiceClient.getLatestResultSetByPlateIdAndProtocolId(plateId, protocolId);
+            return resultDataServiceClient.getResultData(resultSet.getId(), featureId);
+        } catch (ResultSetUnresolvableException | ResultDataUnresolvableException e) {
+            throw new ChartDataException(e.getMessage());
+        }
+    }
+
+    private List<WellDTO> retrieveWellData(Long plateId) throws ChartDataException {
+        try {
+            return plateServiceClient.getWells(plateId);
+        } catch (PlateUnresolvableException e) {
+            throw new ChartDataException(e.getMessage());
+        }
+    }
+
+    private List<String> convertValuesToReadableFormat(float[] values) {
+        return IntStream.range(0, values.length)
+                .mapToObj(i -> String.valueOf(values[i]))
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, Function<WellDTO, String>> fieldMapper = Map.of(
+            "wellId", well -> well.getId().toString(),
+            "row", well -> well.getRow().toString(),
+            "column", well -> well.getColumn().toString(),
+            "wellNr", well -> well.getWellNr().toString(),
+            "wellType", WellDTO::getWellType,
+            "wellSubstance", well -> well.getWellSubstance().getName()
+    );
+
+    private List<String> convertWellDataToReadableFormat(List<WellDTO> wellData, String fieldName) throws ChartDataException {
+        Function<WellDTO, String> mapper = fieldMapper.get(fieldName.toLowerCase());
+        if (mapper == null) {
+            throw new ChartDataException(String.format("Unknown well property %s!", fieldName));
+        }
+        return wellData.stream().map(mapper).toList();
+    }
 }

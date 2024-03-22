@@ -18,29 +18,9 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.chartingservice.model;
+package eu.openanalytics.phaedra.chartingservice.enumeration;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
-
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ChartData {
-    List<Float> xValue;
-    List<Float> yValue;
-    String type;
-    String name;
-    String mode;
-
-    List<String> xValues;
-    List<String> yValues;
-
+public enum AxisFieldType {
+    FEATURE_ID,
+    WELL_PROPERTY
 }
