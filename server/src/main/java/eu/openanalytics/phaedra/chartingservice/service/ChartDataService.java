@@ -214,12 +214,13 @@ public class ChartDataService {
     }
 
     private Map<String, Function<WellDTO, String>> fieldMapper = Map.of(
-            "wellId", well -> well.getId().toString(),
-            "row", well -> well.getRow().toString(),
-            "column", well -> well.getColumn().toString(),
-            "wellNr", well -> well.getWellNr().toString(),
+            "wellId", well -> String.valueOf(well.getId()),
+            "row", well -> String.valueOf(well.getRow()),
+            "column", well -> String.valueOf(well.getColumn()),
+            "wellNr", well -> String.valueOf(well.getWellNr()),
             "wellType", WellDTO::getWellType,
-            "wellSubstance", well -> well.getWellSubstance().getName()
+            "wellSubstance", well -> well.getWellSubstance().getName(),
+            "wellConcentration", well -> String.valueOf(well.getWellSubstance().getConcentration())
     );
 
     private List<String> convertWellDataToReadableFormat(List<WellDTO> wellData, String fieldName) throws ChartDataException {
