@@ -178,7 +178,7 @@ public class ChartDataService {
         return chartDataDTOS;
     }
 
-    public List<String> getChartData(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType) throws ChartDataException {
+    public List<String> getChartData(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
         if (AxisFieldType.FEATURE_ID.equals(fieldType)) {
             ResultDataDTO resultData = retrieveResultData(plateId, protocolId, Long.parseLong(fieldName));
             return convertValuesToReadableFormat(resultData.getValues());

@@ -22,10 +22,29 @@ public class ChartController {
     @GetMapping("/scatter")
     public ChartData getScatterData(@RequestParam Long plateId, @RequestParam(required = false) Long protocolId,
                                     @RequestParam String xFieldName, @RequestParam AxisFieldType xFieldType,
-                                    @RequestParam String yFieldName, @RequestParam AxisFieldType yFieldType) throws ChartDataException {
+                                    @RequestParam String yFieldName, @RequestParam AxisFieldType yFieldType,
+                                    @RequestParam(defaultValue = "none") String groupBy) throws ChartDataException {
         ChartData result = new ChartData();
-        result.setXValues(chartDataService.getChartData(plateId, protocolId, xFieldName, xFieldType));
-        result.setYValues(chartDataService.getChartData(plateId, protocolId, yFieldName, yFieldType));
+        result.setXValues(chartDataService.getChartData(plateId, protocolId, xFieldName, xFieldType, groupBy));
+        result.setYValues(chartDataService.getChartData(plateId, protocolId, yFieldName, yFieldType, groupBy));
+        return result;
+    }
+
+    @GetMapping("/box")
+    public ChartData getBoxPlotData(@RequestParam Long plateId, @RequestParam(required = false) Long protocolId,
+                                    @RequestParam String yFieldName, @RequestParam AxisFieldType yFieldType,
+                                    @RequestParam(defaultValue = "none") String groupBy) throws ChartDataException {
+        ChartData result = new ChartData();
+        result.setYValues(chartDataService.getChartData(plateId, protocolId, yFieldName, yFieldType, groupBy));
+        return result;
+    }
+
+    @GetMapping("/histogram")
+    public ChartData getHistogramData(@RequestParam Long plateId, @RequestParam(required = false) Long protocolId,
+                                    @RequestParam String xFieldName, @RequestParam AxisFieldType xFieldType,
+                                    @RequestParam(defaultValue = "none") String groupBy) throws ChartDataException {
+        ChartData result = new ChartData();
+        result.setXValues(chartDataService.getChartData(plateId, protocolId, xFieldName, xFieldType, groupBy));
         return result;
     }
 }
