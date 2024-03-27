@@ -24,6 +24,7 @@ import eu.openanalytics.phaedra.chartingservice.dto.ChartDataDTO;
 import eu.openanalytics.phaedra.chartingservice.dto.ChartTupleDTO;
 import eu.openanalytics.phaedra.chartingservice.enumeration.AxisFieldType;
 import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
+import eu.openanalytics.phaedra.chartingservice.model.ChartData;
 import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
@@ -38,10 +39,7 @@ import eu.openanalytics.phaedra.resultdataservice.dto.ResultDataDTO;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -178,7 +176,67 @@ public class ChartDataService {
         return chartDataDTOS;
     }
 
-    public List<String> getChartData(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
+    public Map<String, ChartData> getScatterPlot(Long plateId, Long protocolId, String xFieldName, AxisFieldType xFieldType, String yFieldName, AxisFieldType yFieldType, String groupBy) throws ChartDataException {
+        List<WellDTO> wells = retrieveWellData(plateId);
+        List<String> xValues = getChartData(plateId, protocolId, xFieldName, xFieldType);
+        List<String> yValues = getChartData(plateId, protocolId, yFieldName, yFieldType);
+
+        Map<String, ChartData> groupByMap = new HashMap<>();
+        IntStream.range(0, wells.size()).forEach(i -> {
+            String groupKey = defineGroupKey(wells.get(i), groupBy);
+            if (!groupByMap.containsKey(groupKey)) {
+                groupByMap.put(groupKey, ChartData.builder()
+                        .mode("markers")
+                        .type("scatter")
+                        .name(groupKey)
+                        .xValues(new ArrayList<>())
+                        .yValues(new ArrayList<>())
+                        .build());
+            }
+            groupByMap.get(groupKey).getXValues().add(xValues.get(i));
+            groupByMap.get(groupKey).getYValues().add(yValues.get(i));
+        });
+        return groupByMap;
+    }
+
+    public Map<String, ChartData> getBoxPlot(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
+        List<WellDTO> wells = retrieveWellData(plateId);
+        List<String> yValues = getChartData(plateId, protocolId, fieldName, fieldType);
+
+        Map<String, ChartData> groupByMap = new HashMap<>();
+        IntStream.range(0, wells.size()).forEach(i -> {
+            String groupKey = defineGroupKey(wells.get(i), groupBy);
+            if (!groupByMap.containsKey(groupKey)) {
+                groupByMap.put(groupKey, ChartData.builder()
+                        .type("box")
+                        .name(groupKey)
+                        .yValues(yValues)
+                        .build());
+            }
+            groupByMap.get(groupKey).getYValues().add(yValues.get(i));
+        });
+        return groupByMap;
+    }
+
+    public Map<String, ChartData> getHistogramPlot(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
+        List<WellDTO> wells = retrieveWellData(plateId);
+        List<String> xValues = getChartData(plateId, protocolId, fieldName, fieldType);
+
+        Map<String, ChartData> groupByMap = new HashMap<>();
+        IntStream.range(0, wells.size()).forEach(i -> {
+            String groupKey = defineGroupKey(wells.get(i), groupBy);
+            if (!groupByMap.containsKey(groupKey)) {
+                groupByMap.put(groupKey, ChartData.builder()
+                        .type("histogram")
+                        .xValues(xValues)
+                        .build());
+            }
+            groupByMap.get(groupKey).getXValues().add(xValues.get(i));
+        });
+        return groupByMap;
+    }
+
+    public List<String> getChartData(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType) throws ChartDataException {
         if (AxisFieldType.FEATURE_ID.equals(fieldType)) {
             ResultDataDTO resultData = retrieveResultData(plateId, protocolId, Long.parseLong(fieldName));
             return convertValuesToReadableFormat(resultData.getValues());
@@ -229,5 +287,24 @@ public class ChartDataService {
             throw new ChartDataException(String.format("Unknown well property %s!", fieldName));
         }
         return wellData.stream().map(mapper).toList();
+    }
+
+    private String defineGroupKey(WellDTO well, String groupBy) {
+        switch (groupBy.toLowerCase()) {
+            case "welltype":
+                return well.getWellType();
+            case "substance":
+                return well.getWellSubstance().getName();
+            case "row":
+                return well.getRow().toString();
+            case "column":
+                return well.getColumn().toString();
+            case "status":
+                return well.getStatus().name();
+            case "none":
+                return groupBy;
+            default:
+                throw new IllegalArgumentException("Unsupported groupBy value: " + groupBy);
+        }
     }
 }

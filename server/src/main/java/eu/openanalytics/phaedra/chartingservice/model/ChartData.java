@@ -36,11 +36,10 @@ import java.util.List;
 public class ChartData {
     List<Float> xValue;
     List<Float> yValue;
-    String type;
-    String name;
-    String mode;
 
     List<String> xValues;
     List<String> yValues;
-
+    String type;
+    String name;
+    String mode;
 }
