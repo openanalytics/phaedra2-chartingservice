@@ -37,6 +37,7 @@ import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultDataUnr
 import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultSetUnresolvableException;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultDataDTO;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -184,17 +185,19 @@ public class ChartDataService {
         Map<String, ChartData> groupByMap = new HashMap<>();
         IntStream.range(0, wells.size()).forEach(i -> {
             String groupKey = defineGroupKey(wells.get(i), groupBy);
-            if (!groupByMap.containsKey(groupKey)) {
-                groupByMap.put(groupKey, ChartData.builder()
-                        .mode("markers")
-                        .type("scatter")
-                        .name(groupKey)
-                        .xValues(new ArrayList<>())
-                        .yValues(new ArrayList<>())
-                        .build());
+            if (StringUtils.isNotBlank(groupKey)) {
+                if (!groupByMap.containsKey(groupKey)) {
+                    groupByMap.put(groupKey, ChartData.builder()
+                            .mode("markers")
+                            .type("scatter")
+                            .name(groupKey)
+                            .xValues(new ArrayList<>())
+                            .yValues(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(groupKey).getXValues().add(xValues.get(i));
+                groupByMap.get(groupKey).getYValues().add(yValues.get(i));
             }
-            groupByMap.get(groupKey).getXValues().add(xValues.get(i));
-            groupByMap.get(groupKey).getYValues().add(yValues.get(i));
         });
         return groupByMap;
     }
@@ -206,14 +209,16 @@ public class ChartDataService {
         Map<String, ChartData> groupByMap = new HashMap<>();
         IntStream.range(0, wells.size()).forEach(i -> {
             String groupKey = defineGroupKey(wells.get(i), groupBy);
-            if (!groupByMap.containsKey(groupKey)) {
-                groupByMap.put(groupKey, ChartData.builder()
-                        .type("box")
-                        .name(groupKey)
-                        .yValues(yValues)
-                        .build());
+            if (StringUtils.isNotBlank(groupKey)) {
+                if (!groupByMap.containsKey(groupKey)) {
+                    groupByMap.put(groupKey, ChartData.builder()
+                            .type("box")
+                            .name(groupKey)
+                            .yValues(yValues)
+                            .build());
+                }
+                groupByMap.get(groupKey).getYValues().add(yValues.get(i));
             }
-            groupByMap.get(groupKey).getYValues().add(yValues.get(i));
         });
         return groupByMap;
     }
@@ -225,13 +230,15 @@ public class ChartDataService {
         Map<String, ChartData> groupByMap = new HashMap<>();
         IntStream.range(0, wells.size()).forEach(i -> {
             String groupKey = defineGroupKey(wells.get(i), groupBy);
-            if (!groupByMap.containsKey(groupKey)) {
-                groupByMap.put(groupKey, ChartData.builder()
-                        .type("histogram")
-                        .xValues(xValues)
-                        .build());
+            if (StringUtils.isNotBlank(groupKey)) {
+                if (!groupByMap.containsKey(groupKey)) {
+                    groupByMap.put(groupKey, ChartData.builder()
+                            .type("histogram")
+                            .xValues(xValues)
+                            .build());
+                }
+                groupByMap.get(groupKey).getXValues().add(xValues.get(i));
             }
-            groupByMap.get(groupKey).getXValues().add(xValues.get(i));
         });
         return groupByMap;
     }
@@ -294,7 +301,7 @@ public class ChartDataService {
             case "welltype":
                 return well.getWellType();
             case "substance":
-                return well.getWellSubstance().getName();
+                return well.getWellSubstance() != null ? well.getWellSubstance().getName() : null;
             case "row":
                 return well.getRow().toString();
             case "column":
