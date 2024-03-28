@@ -214,7 +214,7 @@ public class ChartDataService {
                     groupByMap.put(groupKey, ChartData.builder()
                             .type("box")
                             .name(groupKey)
-                            .yValues(yValues)
+                            .yValues(new ArrayList<>())
                             .build());
                 }
                 groupByMap.get(groupKey).getYValues().add(yValues.get(i));
@@ -234,7 +234,7 @@ public class ChartDataService {
                 if (!groupByMap.containsKey(groupKey)) {
                     groupByMap.put(groupKey, ChartData.builder()
                             .type("histogram")
-                            .xValues(xValues)
+                            .xValues(new ArrayList<>())
                             .build());
                 }
                 groupByMap.get(groupKey).getXValues().add(xValues.get(i));
