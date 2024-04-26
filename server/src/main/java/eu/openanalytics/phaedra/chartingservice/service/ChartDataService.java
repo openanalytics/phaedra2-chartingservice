@@ -21,27 +21,29 @@
 package eu.openanalytics.phaedra.chartingservice.service;
 
 import eu.openanalytics.phaedra.chartingservice.dto.ChartDataDTO;
-import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
 import eu.openanalytics.phaedra.chartingservice.dto.ChartTupleDTO;
+import eu.openanalytics.phaedra.chartingservice.enumeration.AxisFieldType;
+import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
+import eu.openanalytics.phaedra.chartingservice.model.ChartData;
+import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
+import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 import eu.openanalytics.phaedra.protocolservice.client.exception.ProtocolUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
+import eu.openanalytics.phaedra.resultdataservice.client.ResultDataServiceClient;
 import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultDataUnresolvableException;
 import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultSetUnresolvableException;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultDataDTO;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import eu.openanalytics.phaedra.resultdataservice.client.ResultDataServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
-import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ChartDataService {
@@ -175,4 +177,141 @@ public class ChartDataService {
         return chartDataDTOS;
     }
 
+    public Map<String, ChartData> getScatterPlot(Long plateId, Long protocolId, String xFieldName, AxisFieldType xFieldType, String yFieldName, AxisFieldType yFieldType, String groupBy) throws ChartDataException {
+        List<WellDTO> wells = retrieveWellData(plateId);
+        List<String> xValues = getChartData(plateId, protocolId, xFieldName, xFieldType);
+        List<String> yValues = getChartData(plateId, protocolId, yFieldName, yFieldType);
+
+        Map<String, ChartData> groupByMap = new HashMap<>();
+        IntStream.range(0, wells.size()).forEach(i -> {
+            String groupKey = defineGroupKey(wells.get(i), groupBy);
+            if (StringUtils.isNotBlank(groupKey)) {
+                if (!groupByMap.containsKey(groupKey)) {
+                    groupByMap.put(groupKey, ChartData.builder()
+                            .mode("markers")
+                            .type("scatter")
+                            .name(groupKey)
+                            .xValues(new ArrayList<>())
+                            .yValues(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(groupKey).getXValues().add(xValues.get(i));
+                groupByMap.get(groupKey).getYValues().add(yValues.get(i));
+            }
+        });
+        return groupByMap;
+    }
+
+    public Map<String, ChartData> getBoxPlot(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
+        List<WellDTO> wells = retrieveWellData(plateId);
+        List<String> yValues = getChartData(plateId, protocolId, fieldName, fieldType);
+
+        Map<String, ChartData> groupByMap = new HashMap<>();
+        IntStream.range(0, wells.size()).forEach(i -> {
+            String groupKey = defineGroupKey(wells.get(i), groupBy);
+            if (StringUtils.isNotBlank(groupKey)) {
+                if (!groupByMap.containsKey(groupKey)) {
+                    groupByMap.put(groupKey, ChartData.builder()
+                            .type("box")
+                            .name(groupKey)
+                            .yValues(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(groupKey).getYValues().add(yValues.get(i));
+            }
+        });
+        return groupByMap;
+    }
+
+    public Map<String, ChartData> getHistogramPlot(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
+        List<WellDTO> wells = retrieveWellData(plateId);
+        List<String> xValues = getChartData(plateId, protocolId, fieldName, fieldType);
+
+        Map<String, ChartData> groupByMap = new HashMap<>();
+        IntStream.range(0, wells.size()).forEach(i -> {
+            String groupKey = defineGroupKey(wells.get(i), groupBy);
+            if (StringUtils.isNotBlank(groupKey)) {
+                if (!groupByMap.containsKey(groupKey)) {
+                    groupByMap.put(groupKey, ChartData.builder()
+                            .type("histogram")
+                            .xValues(new ArrayList<>())
+                            .build());
+                }
+                groupByMap.get(groupKey).getXValues().add(xValues.get(i));
+            }
+        });
+        return groupByMap;
+    }
+
+    public List<String> getChartData(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType) throws ChartDataException {
+        if (AxisFieldType.FEATURE_ID.equals(fieldType)) {
+            ResultDataDTO resultData = retrieveResultData(plateId, protocolId, Long.parseLong(fieldName));
+            return convertValuesToReadableFormat(resultData.getValues());
+        } else if (AxisFieldType.WELL_PROPERTY.equals(fieldType)) {
+            List<WellDTO> wellData = retrieveWellData(plateId);
+            return convertWellDataToReadableFormat(wellData, fieldName);
+        } else {
+            throw new ChartDataException("Unknown axis field type!");
+        }
+    }
+
+    private ResultDataDTO retrieveResultData(Long plateId, Long protocolId, Long featureId) throws ChartDataException {
+        try {
+            ResultSetDTO resultSet = resultDataServiceClient.getLatestResultSetByPlateIdAndProtocolId(plateId, protocolId);
+            return resultDataServiceClient.getResultData(resultSet.getId(), featureId);
+        } catch (ResultSetUnresolvableException | ResultDataUnresolvableException e) {
+            throw new ChartDataException(e.getMessage());
+        }
+    }
+
+    private List<WellDTO> retrieveWellData(Long plateId) throws ChartDataException {
+        try {
+            return plateServiceClient.getWells(plateId);
+        } catch (PlateUnresolvableException e) {
+            throw new ChartDataException(e.getMessage());
+        }
+    }
+
+    private List<String> convertValuesToReadableFormat(float[] values) {
+        return IntStream.range(0, values.length)
+                .mapToObj(i -> String.valueOf(values[i]))
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, Function<WellDTO, String>> fieldMapper = Map.of(
+            "wellId", well -> String.valueOf(well.getId()),
+            "row", well -> String.valueOf(well.getRow()),
+            "column", well -> String.valueOf(well.getColumn()),
+            "wellNr", well -> String.valueOf(well.getWellNr()),
+            "wellType", WellDTO::getWellType,
+            "wellSubstance", well -> well.getWellSubstance().getName(),
+            "wellConcentration", well -> String.valueOf(well.getWellSubstance().getConcentration())
+    );
+
+    private List<String> convertWellDataToReadableFormat(List<WellDTO> wellData, String fieldName) throws ChartDataException {
+        Function<WellDTO, String> mapper = fieldMapper.get(fieldName);
+        if (mapper == null) {
+            throw new ChartDataException(String.format("Unknown well property %s!", fieldName));
+        }
+        return wellData.stream().map(mapper).toList();
+    }
+
+    private String defineGroupKey(WellDTO well, String groupBy) {
+        switch (groupBy.toLowerCase()) {
+            case "welltype":
+                return well.getWellType();
+            case "substance":
+                return well.getWellSubstance() != null ? well.getWellSubstance().getName() : null;
+            case "row":
+                return well.getRow().toString();
+            case "column":
+                return well.getColumn().toString();
+            case "status":
+                return well.getStatus().name();
+            case "none":
+                return groupBy;
+            default:
+                throw new IllegalArgumentException("Unsupported groupBy value: " + groupBy);
+        }
+    }
 }
