@@ -5,6 +5,7 @@
 /client/phaedra2-chartingservice-client.iml
 
 # Eclipse IDE files
+*.DS_Store
 /target/
 .settings/
 .project
