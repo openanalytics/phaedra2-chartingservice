@@ -32,6 +32,7 @@ import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableE
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 import eu.openanalytics.phaedra.protocolservice.client.exception.ProtocolUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
@@ -276,6 +277,7 @@ public class ChartDataService {
             return Collections.emptyList();
 
         return plates.stream()
+            .filter(plate -> CalculationStatus.CALCULATION_OK.equals(plate.getCalculationStatus()))
             .map(this::createTrendChartDataForPlate)
             .collect(Collectors.toList());
     }
