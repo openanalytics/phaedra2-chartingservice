@@ -370,16 +370,10 @@ public class ChartDataService {
 
     private FeatureStatData mapToFeatureStatData(ResultFeatureStatDTO fstat) {
         FeatureStatData fStatData = new FeatureStatData();
-        try {
-            FeatureDTO featureDTO = protocolServiceClient.getFeature(fstat.getFeatureId());
-            fStatData.setFeatureId(fstat.getFeatureId());
-            fStatData.setFeatureName(featureDTO.getName()); //TODO: move this to ResultFeatureStatDTO
-            fStatData.setStatName(fstat.getStatisticName());
-            fStatData.setStatValue(fstat.getValue());
-            fStatData.setWellType(fstat.getWelltype());
-        } catch (FeatureUnresolvableException e) {
-            logger.error(e.getMessage());
-        }
+        fStatData.setFeatureId(fstat.getFeatureId());
+        fStatData.setStatName(fstat.getStatisticName());
+        fStatData.setStatValue(fstat.getValue());
+        fStatData.setWellType(fstat.getWelltype());
         return fStatData;
     }
 }
