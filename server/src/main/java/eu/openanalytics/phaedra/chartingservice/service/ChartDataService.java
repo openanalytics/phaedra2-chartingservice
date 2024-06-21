@@ -373,7 +373,7 @@ public class ChartDataService {
         try {
             FeatureDTO featureDTO = protocolServiceClient.getFeature(fstat.getFeatureId());
             fStatData.setFeatureId(fstat.getFeatureId());
-            fStatData.setStatName(featureDTO.getName()); //TODO: move this to ResultFeatureStatDTO
+            fStatData.setFeatureName(featureDTO.getName()); //TODO: move this to ResultFeatureStatDTO
             fStatData.setStatName(fstat.getStatisticName());
             fStatData.setStatValue(fstat.getValue());
             fStatData.setWellType(fstat.getWelltype());
