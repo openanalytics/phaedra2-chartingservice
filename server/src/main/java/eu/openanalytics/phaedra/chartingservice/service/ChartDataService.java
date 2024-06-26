@@ -34,7 +34,6 @@ import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
-import eu.openanalytics.phaedra.protocolservice.client.exception.FeatureUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.client.exception.ProtocolUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.resultdataservice.client.ResultDataServiceClient;
@@ -208,12 +207,15 @@ public class ChartDataService {
                             .mode("markers")
                             .type("scatter")
                             .name(groupKey)
+                            .customdata(new HashMap<>())
                             .xValues(new ArrayList<>())
                             .yValues(new ArrayList<>())
                             .build());
                 }
                 groupByMap.get(groupKey).getXValues().add(xValues.get(i));
                 groupByMap.get(groupKey).getYValues().add(yValues.get(i));
+                groupByMap.get(groupKey).getCustomdata().put("wellId", wells.get(i).getId());
+                groupByMap.get(groupKey).getCustomdata().put("status", wells.get(i).getStatus().getCode());
             }
         });
         return groupByMap;

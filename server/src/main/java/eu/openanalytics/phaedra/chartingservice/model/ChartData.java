@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.chartingservice.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.HashMap;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,4 +43,6 @@ public class ChartData {
     String type;
     String name;
     String mode;
+
+    HashMap<String, Object> customdata;
 }
