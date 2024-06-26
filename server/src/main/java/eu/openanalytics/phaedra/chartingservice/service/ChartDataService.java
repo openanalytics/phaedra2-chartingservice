@@ -207,15 +207,14 @@ public class ChartDataService {
                             .mode("markers")
                             .type("scatter")
                             .name(groupKey)
-                            .customdata(new HashMap<>())
+                            .customdata(new ArrayList<>())
                             .xValues(new ArrayList<>())
                             .yValues(new ArrayList<>())
                             .build());
                 }
                 groupByMap.get(groupKey).getXValues().add(xValues.get(i));
                 groupByMap.get(groupKey).getYValues().add(yValues.get(i));
-                groupByMap.get(groupKey).getCustomdata().put("wellId", wells.get(i).getId());
-                groupByMap.get(groupKey).getCustomdata().put("status", wells.get(i).getStatus().getCode());
+                groupByMap.get(groupKey).getCustomdata().add(wells.get(i));
             }
         });
         return groupByMap;

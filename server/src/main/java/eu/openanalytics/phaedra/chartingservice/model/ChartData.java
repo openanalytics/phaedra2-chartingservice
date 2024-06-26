@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.chartingservice.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import java.util.HashMap;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,5 +45,5 @@ public class ChartData {
     String name;
     String mode;
 
-    HashMap<String, Object> customdata;
+    List<WellDTO> customdata;
 }
