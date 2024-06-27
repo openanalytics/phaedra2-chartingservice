@@ -253,9 +253,11 @@ public class ChartDataService {
                     groupByMap.put(groupKey, ChartData.builder()
                             .type("histogram")
                             .xValues(new ArrayList<>())
+                            .customdata(new ArrayList<>())
                             .build());
                 }
                 groupByMap.get(groupKey).getXValues().add(xValues.get(i));
+                groupByMap.get(groupKey).getCustomdata().add(wells.get(i));
             }
         });
         return groupByMap;
