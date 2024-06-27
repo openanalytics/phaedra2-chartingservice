@@ -44,6 +44,7 @@ public class ChartData {
     String type;
     String name;
     String mode;
+    HashMap<String, Object> marker;
 
     List<WellDTO> customdata;
 }

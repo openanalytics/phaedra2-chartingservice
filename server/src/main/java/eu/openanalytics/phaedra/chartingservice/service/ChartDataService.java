@@ -207,6 +207,7 @@ public class ChartDataService {
                             .mode("markers")
                             .type("scatter")
                             .name(groupKey)
+                            .marker(new HashMap<>())
                             .customdata(new ArrayList<>())
                             .xValues(new ArrayList<>())
                             .yValues(new ArrayList<>())
@@ -215,6 +216,7 @@ public class ChartDataService {
                 groupByMap.get(groupKey).getXValues().add(xValues.get(i));
                 groupByMap.get(groupKey).getYValues().add(yValues.get(i));
                 groupByMap.get(groupKey).getCustomdata().add(wells.get(i));
+                groupByMap.get(groupKey).getMarker().put("symbol", wells.stream().map(well -> well.getStatus().getCode() < 0 ? "x" : "o").toList());
             }
         });
         return groupByMap;
