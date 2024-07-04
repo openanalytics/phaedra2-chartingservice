@@ -25,25 +25,38 @@ import eu.openanalytics.phaedra.chartingservice.dto.ChartTupleDTO;
 import eu.openanalytics.phaedra.chartingservice.enumeration.AxisFieldType;
 import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
 import eu.openanalytics.phaedra.chartingservice.model.ChartData;
+import eu.openanalytics.phaedra.chartingservice.model.FeatureStatData;
+import eu.openanalytics.phaedra.chartingservice.model.TrendChartData;
 import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 import eu.openanalytics.phaedra.protocolservice.client.ProtocolServiceClient;
 import eu.openanalytics.phaedra.protocolservice.client.exception.ProtocolUnresolvableException;
 import eu.openanalytics.phaedra.protocolservice.dto.FeatureDTO;
 import eu.openanalytics.phaedra.resultdataservice.client.ResultDataServiceClient;
 import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultDataUnresolvableException;
+import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultFeatureStatUnresolvableException;
 import eu.openanalytics.phaedra.resultdataservice.client.exception.ResultSetUnresolvableException;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultDataDTO;
+import eu.openanalytics.phaedra.resultdataservice.dto.ResultFeatureStatDTO;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ChartDataService {
@@ -51,6 +64,8 @@ public class ChartDataService {
     private final ResultDataServiceClient resultDataServiceClient;
     private final PlateServiceClient plateServiceClient;
     private final ProtocolServiceClient protocolServiceClient;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public ChartDataService(ResultDataServiceClient resultDataServiceClient, PlateServiceClient plateServiceClient, ProtocolServiceClient protocolServiceClient) {
         this.resultDataServiceClient = resultDataServiceClient;
@@ -160,9 +175,10 @@ public class ChartDataService {
             chartTupleDTOs.add(new ChartTupleDTO("Column", String.valueOf(well.getColumn())));
             chartTupleDTOs.add(new ChartTupleDTO("WellType", well.getWellType()));
             chartTupleDTOs.add(new ChartTupleDTO("WellStatus", well.getStatus().name()));
-//            chartTupleDTOs.add(new ChartTupleDTO("CompoundId", String.valueOf(well.getCompoundId())));
-            if (well.getWellSubstance() != null)
-                chartTupleDTOs.add(new ChartTupleDTO("WellSubstance", well.getWellSubstance().getName()));
+            if (well.getWellSubstance() != null) {
+                chartTupleDTOs.add(
+                    new ChartTupleDTO("WellSubstance", well.getWellSubstance().getName()));
+            }
             ChartDataDTO chartDataDTO = new ChartDataDTO(well.getId(), chartTupleDTOs);
             return chartDataDTO;
         }).collect(Collectors.toList());
@@ -177,7 +193,7 @@ public class ChartDataService {
         return chartDataDTOS;
     }
 
-    public Map<String, ChartData> getScatterPlot(Long plateId, Long protocolId, String xFieldName, AxisFieldType xFieldType, String yFieldName, AxisFieldType yFieldType, String groupBy) throws ChartDataException {
+    public Map<String, ChartData> getScatterPlotData(Long plateId, Long protocolId, String xFieldName, AxisFieldType xFieldType, String yFieldName, AxisFieldType yFieldType, String groupBy) throws ChartDataException {
         List<WellDTO> wells = retrieveWellData(plateId);
         List<String> xValues = getChartData(plateId, protocolId, xFieldName, xFieldType);
         List<String> yValues = getChartData(plateId, protocolId, yFieldName, yFieldType);
@@ -191,18 +207,20 @@ public class ChartDataService {
                             .mode("markers")
                             .type("scatter")
                             .name(groupKey)
+                            .customdata(new ArrayList<>())
                             .xValues(new ArrayList<>())
                             .yValues(new ArrayList<>())
                             .build());
                 }
                 groupByMap.get(groupKey).getXValues().add(xValues.get(i));
                 groupByMap.get(groupKey).getYValues().add(yValues.get(i));
+                groupByMap.get(groupKey).getCustomdata().add(wells.get(i));
             }
         });
         return groupByMap;
     }
 
-    public Map<String, ChartData> getBoxPlot(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
+    public Map<String, ChartData> getBoxPlotData(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
         List<WellDTO> wells = retrieveWellData(plateId);
         List<String> yValues = getChartData(plateId, protocolId, fieldName, fieldType);
 
@@ -223,7 +241,7 @@ public class ChartDataService {
         return groupByMap;
     }
 
-    public Map<String, ChartData> getHistogramPlot(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
+    public Map<String, ChartData> getHistogramPlotData(Long plateId, Long protocolId, String fieldName, AxisFieldType fieldType, String groupBy) throws ChartDataException {
         List<WellDTO> wells = retrieveWellData(plateId);
         List<String> xValues = getChartData(plateId, protocolId, fieldName, fieldType);
 
@@ -235,9 +253,11 @@ public class ChartDataService {
                     groupByMap.put(groupKey, ChartData.builder()
                             .type("histogram")
                             .xValues(new ArrayList<>())
+                            .customdata(new ArrayList<>())
                             .build());
                 }
                 groupByMap.get(groupKey).getXValues().add(xValues.get(i));
+                groupByMap.get(groupKey).getCustomdata().add(wells.get(i));
             }
         });
         return groupByMap;
@@ -253,6 +273,17 @@ public class ChartDataService {
         } else {
             throw new ChartDataException("Unknown axis field type!");
         }
+    }
+
+    public List<TrendChartData> getTrendChartData(Long experimentId) {
+        List<PlateDTO> plates = plateServiceClient.getPlatesByExperiment(experimentId);
+        if (CollectionUtils.isEmpty(plates))
+            return Collections.emptyList();
+
+        return plates.stream()
+            .filter(plate -> CalculationStatus.CALCULATION_OK.equals(plate.getCalculationStatus()))
+            .map(this::createTrendChartDataForPlate)
+            .collect(Collectors.toList());
     }
 
     private ResultDataDTO retrieveResultData(Long plateId, Long protocolId, Long featureId) throws ChartDataException {
@@ -313,5 +344,39 @@ public class ChartDataService {
             default:
                 throw new IllegalArgumentException("Unsupported groupBy value: " + groupBy);
         }
+    }
+
+    private TrendChartData createTrendChartDataForPlate(PlateDTO plateDTO) {
+        TrendChartData trendChartData = new TrendChartData();
+
+        try {
+            List<ResultFeatureStatDTO> featureStats = resultDataServiceClient.getLatestResultFeatureStatsForPlateId(
+                plateDTO.getId());
+
+            if (CollectionUtils.isNotEmpty(featureStats)) {
+                List<FeatureStatData> featureStatData = featureStats.stream()
+                    .map(this::mapToFeatureStatData)
+                    .collect(Collectors.toList());
+
+                trendChartData.setFeatureStats(featureStatData);
+            }
+
+        } catch (ResultFeatureStatUnresolvableException e) {
+            logger.error(e.getMessage());
+        } finally {
+            trendChartData.setPlateId(plateDTO.getId());
+            trendChartData.setBarcode(plateDTO.getBarcode());
+        }
+
+        return trendChartData;
+    }
+
+    private FeatureStatData mapToFeatureStatData(ResultFeatureStatDTO fstat) {
+        FeatureStatData fStatData = new FeatureStatData();
+        fStatData.setFeatureId(fstat.getFeatureId());
+        fStatData.setStatName(fstat.getStatisticName());
+        fStatData.setStatValue(fstat.getValue());
+        fStatData.setWellType(fstat.getWelltype());
+        return fStatData;
     }
 }

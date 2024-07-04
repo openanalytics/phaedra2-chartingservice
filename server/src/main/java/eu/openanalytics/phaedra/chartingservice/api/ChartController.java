@@ -3,7 +3,9 @@ package eu.openanalytics.phaedra.chartingservice.api;
 import eu.openanalytics.phaedra.chartingservice.enumeration.AxisFieldType;
 import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
 import eu.openanalytics.phaedra.chartingservice.model.ChartData;
+import eu.openanalytics.phaedra.chartingservice.model.TrendChartData;
 import eu.openanalytics.phaedra.chartingservice.service.ChartDataService;
+import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,20 +29,25 @@ public class ChartController {
                                                  @RequestParam String yFieldName, @RequestParam AxisFieldType yFieldType,
                                                  @RequestParam(defaultValue = "none") String groupBy) throws ChartDataException {
 
-        return chartDataService.getScatterPlot(plateId, protocolId, xFieldName, xFieldType, yFieldName, yFieldType, groupBy);
+        return chartDataService.getScatterPlotData(plateId, protocolId, xFieldName, xFieldType, yFieldName, yFieldType, groupBy);
     }
 
     @GetMapping("/box")
     public Map<String, ChartData> getBoxPlotData(@RequestParam Long plateId, @RequestParam(required = false) Long protocolId,
                                                  @RequestParam String yFieldName, @RequestParam AxisFieldType yFieldType,
                                                  @RequestParam(defaultValue = "none") String groupBy) throws ChartDataException {
-        return chartDataService.getBoxPlot(plateId, protocolId, yFieldName, yFieldType, groupBy);
+        return chartDataService.getBoxPlotData(plateId, protocolId, yFieldName, yFieldType, groupBy);
     }
 
     @GetMapping("/histogram")
     public Map<String, ChartData> getHistogramData(@RequestParam Long plateId, @RequestParam(required = false) Long protocolId,
                                                    @RequestParam String xFieldName, @RequestParam AxisFieldType xFieldType,
                                                    @RequestParam(defaultValue = "none") String groupBy) throws ChartDataException {
-        return chartDataService.getHistogramPlot(plateId, protocolId, xFieldName, xFieldType, groupBy);
+        return chartDataService.getHistogramPlotData(plateId, protocolId, xFieldName, xFieldType, groupBy);
+    }
+
+    @GetMapping("plate_trend")
+    public List<TrendChartData> getTrendChartData(@RequestParam Long experimentId) {
+        return chartDataService.getTrendChartData(experimentId);
     }
 }
