@@ -28,7 +28,7 @@ import eu.openanalytics.phaedra.chartingservice.model.ChartData;
 import eu.openanalytics.phaedra.chartingservice.model.FeatureStatData;
 import eu.openanalytics.phaedra.chartingservice.model.TrendChartData;
 import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.client.exception.UnresolvableObjectException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
@@ -98,7 +98,7 @@ public class ChartDataService {
         List<PlateMeasurementDTO> measurementDTOs = new ArrayList<>();
         try {
             measurementDTOs = plateServiceClient.getPlateMeasurements(plateId);
-        } catch (PlateUnresolvableException e) {
+        } catch (UnresolvableObjectException e) {
             throw new ChartDataException("Measurements for plate with id " + plateId + " are not resolvable");
         }
         //Find the active measurement
@@ -163,7 +163,7 @@ public class ChartDataService {
         List<WellDTO> wells;
         try {
             wells = plateServiceClient.getWells(plateId);
-        } catch (PlateUnresolvableException e) {
+        } catch (UnresolvableObjectException e) {
             throw new ChartDataException("Wells for plate with id " + plateId + " could not be found");
         }
 
@@ -300,7 +300,7 @@ public class ChartDataService {
     private List<WellDTO> retrieveWellData(Long plateId) throws ChartDataException {
         try {
             return plateServiceClient.getWells(plateId);
-        } catch (PlateUnresolvableException e) {
+        } catch (UnresolvableObjectException e) {
             throw new ChartDataException(e.getMessage());
         }
     }

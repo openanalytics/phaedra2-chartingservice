@@ -24,7 +24,7 @@ import eu.openanalytics.phaedra.chartingservice.dto.ChartDataDTO;
 import eu.openanalytics.phaedra.chartingservice.dto.ChartTupleDTO;
 import eu.openanalytics.phaedra.chartingservice.exception.ChartDataException;
 import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.client.exception.UnresolvableObjectException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
@@ -71,7 +71,7 @@ public class ChartDataServiceTest {
     private ChartDataService chartDataService;
 
     @BeforeEach
-    public void before() throws PlateUnresolvableException, ProtocolUnresolvableException, ResultSetUnresolvableException, ResultDataUnresolvableException {
+    public void before() throws UnresolvableObjectException, ProtocolUnresolvableException, ResultSetUnresolvableException, ResultDataUnresolvableException {
         resultDataServiceClient = mockUnimplemented(ResultDataServiceClient.class);
         plateServiceClient = mockUnimplemented(PlateServiceClient.class);
         protocolServiceClient = mockUnimplemented(ProtocolServiceClient.class);
