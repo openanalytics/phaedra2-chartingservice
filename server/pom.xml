@@ -18,12 +18,6 @@
 	</properties>
 
     <dependencies>
-        <!-- Swagger dependencies -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-        </dependency>
-
 		<!-- Phaedra dependencies -->
         <dependency>
             <groupId>eu.openanalytics.phaedra</groupId>
