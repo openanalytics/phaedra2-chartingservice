@@ -28,7 +28,7 @@ import eu.openanalytics.phaedra.chartingservice.model.ChartData;
 import eu.openanalytics.phaedra.chartingservice.model.FeatureStatData;
 import eu.openanalytics.phaedra.chartingservice.model.TrendChartData;
 import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.client.exception.UnresolvableObjectException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
@@ -98,7 +98,7 @@ public class ChartDataService {
         List<PlateMeasurementDTO> measurementDTOs = new ArrayList<>();
         try {
             measurementDTOs = plateServiceClient.getPlateMeasurements(plateId);
-        } catch (PlateUnresolvableException e) {
+        } catch (UnresolvableObjectException e) {
             throw new ChartDataException("Measurements for plate with id " + plateId + " are not resolvable");
         }
         //Find the active measurement
@@ -163,7 +163,7 @@ public class ChartDataService {
         List<WellDTO> wells;
         try {
             wells = plateServiceClient.getWells(plateId);
-        } catch (PlateUnresolvableException e) {
+        } catch (UnresolvableObjectException e) {
             throw new ChartDataException("Wells for plate with id " + plateId + " could not be found");
         }
 
@@ -207,6 +207,7 @@ public class ChartDataService {
                             .mode("markers")
                             .type("scatter")
                             .name(groupKey)
+                            .marker(new HashMap<>())
                             .customdata(new ArrayList<>())
                             .xValues(new ArrayList<>())
                             .yValues(new ArrayList<>())
@@ -215,6 +216,7 @@ public class ChartDataService {
                 groupByMap.get(groupKey).getXValues().add(xValues.get(i));
                 groupByMap.get(groupKey).getYValues().add(yValues.get(i));
                 groupByMap.get(groupKey).getCustomdata().add(wells.get(i));
+                groupByMap.get(groupKey).getMarker().put("symbol", wells.stream().map(well -> well.getStatus().getCode() < 0 ? "x" : "o").toList());
             }
         });
         return groupByMap;
@@ -298,7 +300,7 @@ public class ChartDataService {
     private List<WellDTO> retrieveWellData(Long plateId) throws ChartDataException {
         try {
             return plateServiceClient.getWells(plateId);
-        } catch (PlateUnresolvableException e) {
+        } catch (UnresolvableObjectException e) {
             throw new ChartDataException(e.getMessage());
         }
     }
